@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hallinta – Metro Pizza</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .table-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-header h3 {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .icon-btn {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 0.4rem 0.9rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+    }
+    .icon-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .section-divider {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      place-items: center;
+    }
+    .modal-overlay.open { display: grid; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 480px;
+      margin: 1rem;
+    }
+    .modal h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Metro<span>.</span>Pizza</a>
+  <ul>
+    <li><a href="index.html">← Etusivu</a></li>
+    <li style="font-size:0.8rem;color:var(--text2)">Ylläpitäjä: admin@metropizza.fi</li>
+    <li><button class="btn btn-outline" style="font-size:0.85rem;padding:0.5rem 1rem">Kirjaudu ulos</button></li>
+  </ul>
+</nav>
+
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#" class="active">📊 Koontinäyttö</a>
+    <a href="#">📦 Tilaukset</a>
+    <a href="#">🍕 Ruokalista</a>
+    <a href="#">👥 Käyttäjät</a>
+    <a href="#">📢 Tiedotteet</a>
+    <a href="#">⚙️ Asetukset</a>
+  </aside>
+
+  <!-- Main content -->
+  <main class="admin-content">
+    <h2>Koontinäyttö</h2>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="label">Tilaukset tänään</div>
+        <div class="value accent">14</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Odottaa käsittelyä</div>
+        <div class="value" style="color:var(--accent2)">3</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Myynti tänään</div>
+        <div class="value gold">148 €</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Rekisteröityneet</div>
+        <div class="value">241</div>
+      </div>
+    </div>
+
+    <!-- Orders table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <h3>Viimeisimmät tilaukset</h3>
+        <button class="icon-btn">Näytä kaikki</button>
+      </div>
+      <table>
+        <thead>
+        <tr>
+          <th>Tilaus #</th>
+          <th>Asiakas</th>
+          <th>Tuotteet</th>
+          <th>Aika</th>
+          <th>Summa</th>
+          <th>Tila</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td style="color:var(--text2)">#1042</td>
+          <td>Mikael Virtanen</td>
+          <td>Metro Special ×1</td>
+          <td style="color:var(--text2)">12:31</td>
+          <td>10,50 €</td>
+          <td><span class="status new">Uusi</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text2)">#1041</td>
+          <td>Aino Mäkinen</td>
+          <td>Margherita ×2, Juoma ×2</td>
+          <td style="color:var(--text2)">12:18</td>
+          <td>21,80 €</td>
+          <td><span class="status pending">Valmisteilla</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text2)">#1040</td>
+          <td>Jonas Lindqvist</td>
+          <td>Salmone ×1</td>
+          <td style="color:var(--text2)">11:55</td>
+          <td>12,90 €</td>
+          <td><span class="status done">Noudettu</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text2)">#1039</td>
+          <td>Ilkka Kylmäniemi</td>
+          <td>Diavola ×1</td>
+          <td style="color:var(--text2)">11:40</td>
+          <td>0,00 €</td>
+          <td><span class="status done">Noudettu</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Menu management -->
+    <div class="section-divider">Ruokalistan hallinta</div>
+
+    <div style="margin-bottom:1rem">
+      <button class="btn btn-primary" onclick="document.getElementById('add-modal').classList.add('open')">
+        + Lisää tuote
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Tuote</th>
+          <th>Kategoria</th>
+          <th>Hinta</th>
+          <th>Erityisruokavaliot</th>
+          <th>Toiminnot</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <strong>Margherita Classica</strong><br>
+            <span style="font-size:0.8rem;color:var(--text2)">Tomaatti, mozzarella, basilika</span>
+          </td>
+          <td style="color:var(--text2)">Pizza</td>
+          <td>8,90 €</td>
+          <td><span class="diet-tag veg">Veg</span> <span class="diet-tag lac">Maitoa</span></td>
+          <td>
+            <button class="icon-btn">Muokkaa</button>
+            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Metro Special</strong><br>
+            <span style="font-size:0.8rem;color:var(--text2)">Kinkku, sieni, oliivi, paprika</span>
+          </td>
+          <td style="color:var(--text2)">Pizza</td>
+          <td>10,50 €</td>
+          <td><span class="diet-tag lac">Maitoa</span></td>
+          <td>
+            <button class="icon-btn">Muokkaa</button>
+            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Veggie Delight</strong><br>
+            <span style="font-size:0.8rem;color:var(--text2)">Kasvistopping, pesto, rucola</span>
+          </td>
+          <td style="color:var(--text2)">Pizza</td>
+          <td>9,90 €</td>
+          <td><span class="diet-tag veg">Veg</span> <span class="diet-tag glu">Glu-free</span></td>
+          <td>
+            <button class="icon-btn">Muokkaa</button>
+            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- Add product modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <h3>Lisää uusi tuote</h3>
+    <div class="form-group">
+      <label>Tuotteen nimi</label>
+      <input type="text" placeholder="esim. Prosciutto e Rucola" />
+    </div>
+    <div class="form-group">
+      <label>Kuvaus</label>
+      <textarea rows="2" style="resize:vertical" placeholder="Ainekset lyhyesti..."></textarea>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="form-group">
+        <label>Hinta (€)</label>
+        <input type="number" step="0.10" placeholder="9.90" />
+      </div>
+      <div class="form-group">
+        <label>Kategoria</label>
+        <select>
+          <option>Pizza</option>
+          <option>Salaatti</option>
+          <option>Juoma</option>
+          <option>Jälkiruoka</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Erityisruokavaliot</label>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.25rem">
+        <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
+          <input type="checkbox" /> Kasvis
+        </label>
+        <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
+          <input type="checkbox" /> Gluteeniton vaihtoehto
+        </label>
+        <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
+          <input type="checkbox" /> Sisältää maitoa
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">
+        Peruuta
+      </button>
+      <button class="btn btn-primary">Tallenna tuote</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

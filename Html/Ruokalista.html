@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruokalista – Metro Pizza</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .day-block {
+      margin-bottom: 2.5rem;
+    }
+    .day-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .day-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .day-block.today .day-name { color: var(--accent); }
+    .day-block.today .menu-item {
+      border-color: rgba(232,71,42,0.2);
+    }
+    .week-nav {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .week-nav button {
+      padding: 0.5rem 1.1rem;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .week-nav button.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: transparent;
+    }
+    .order-bar {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 50;
+    }
+    .cart-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.85rem 1.5rem;
+      border-radius: 100px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(232,71,42,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cart-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(232,71,42,0.45);
+    }
+    .cart-count {
+      background: #fff;
+      color: var(--accent);
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .add-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .add-btn:hover { background: var(--accent); border-color: transparent; color: #fff; }
+    .filter-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-row span {
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-right: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Metro<span>.</span>Pizza</a>
+  <ul>
+    <li><a href="ruokalista.html" class="active" style="color:var(--text)">Ruokalista</a></li>
+    <li><a href="#">Sijainti</a></li>
+    <li><a href="kirjaudu.html">Kirjaudu</a></li>
+    <li><a href="ruokalista.html" class="btn btn-primary">Tilaa nyt</a></li>
+  </ul>
+</nav>
+
+<div class="page-header">
+  <div class="section-label">Viikko 23 · 2025</div>
+  <h1 class="section-title" style="margin-bottom:0.75rem">Ruokalista</h1>
+  <p style="color:var(--text2);font-size:0.9rem">Tuore, päivittäin vaihtuva lounaslista</p>
+</div>
+
+<section>
+  <div class="container">
+
+    <!-- Week navigation -->
+    <div class="week-nav">
+      <button>Viikko 22</button>
+      <button class="active">Viikko 23 (tämä viikko)</button>
+      <button>Viikko 24</button>
+    </div>
+
+    <!-- Diet filter -->
+    <div class="filter-row">
+      <span>Suodata:</span>
+      <button class="tab active">Kaikki</button>
+      <button class="tab">Kasvis</button>
+      <button class="tab">Gluteeniton</button>
+      <button class="tab">Laktoositon</button>
+    </div>
+
+    <!-- Maanantai -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-name">Maanantai</span>
+        <span style="font-size:0.82rem;color:var(--text2)">9.6.</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Margherita Classica</h4>
+            <p>Tomaatti, mozzarella, tuore basilika</p>
+            <div class="diet-tags">
+              <span class="diet-tag veg">Veg</span>
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">8,90 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Pollo Pesto</h4>
+            <p>Kana, pestokastike, kirsikkatomaatti, parmesan</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">10,90 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tiistai -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-name">Tiistai</span>
+        <span style="font-size:0.82rem;color:var(--text2)">10.6.</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Diavola</h4>
+            <p>Salami piccante, tomaatti, mozzarella, chili</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">11,50 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Veggie Delight</h4>
+            <p>Kasvikset, aurinkokuivattu tomaatti, rucolapesto</p>
+            <div class="diet-tags">
+              <span class="diet-tag veg">Veg</span>
+              <span class="diet-tag glu">Glu-free vaihtoehto</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">9,90 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keskiviikko - TODAY -->
+    <div class="day-block today">
+      <div class="day-header">
+        <span class="day-name">Keskiviikko</span>
+        <span style="font-size:0.82rem;color:var(--text2)">11.6.</span>
+        <span class="today-badge">Tänään</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Metro Special</h4>
+            <p>Kinkku, sieni, oliivi, paprika, mozzarella</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">10,50 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Quattro Formaggi</h4>
+            <p>Neljä juustoa, hunaja, saksanpähkinä</p>
+            <div class="diet-tags">
+              <span class="diet-tag veg">Veg</span>
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">11,90 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Salmone</h4>
+            <p>Savulohi, kapris, punasipuli, tuorejuusto</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+              <span class="diet-tag glu">Glu-free vaihtoehto</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">12,90 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Torstai -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-name">Torstai</span>
+        <span style="font-size:0.82rem;color:var(--text2)">12.6.</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Prosciutto e Rucola</h4>
+            <p>Parmankinikku, rucola, parmesan, sitruuna</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">13,50 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Perjantai -->
+    <div class="day-block">
+      <div class="day-header">
+        <span class="day-name">Perjantai</span>
+        <span style="font-size:0.82rem;color:var(--text2)">13.6.</span>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Calzone Metro</h4>
+            <p>Täytetty pizza: ricotta, kinkku, sieni</p>
+            <div class="diet-tags">
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">12,50 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-info">
+            <h4>Bufala</h4>
+            <p>Puhvelinmozzarella, tomaatti, tuore basilika</p>
+            <div class="diet-tags">
+              <span class="diet-tag veg">Veg</span>
+              <span class="diet-tag lac">Maitoa</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
+            <div class="menu-item-price">12,00 €</div>
+            <button class="add-btn">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Floating cart -->
+<div class="order-bar">
+  <button class="cart-btn">
+    🛒 Ostoskori
+    <span class="cart-count">0</span>
+  </button>
+</div>
+
+<footer>
+  <p>© 2025 Metro Pizza &nbsp;·&nbsp; <a href="hallinta.html">Ylläpito</a></p>
+</footer>
+
+</body>
+</html>

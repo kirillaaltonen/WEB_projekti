@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kirjaudu – Metro Pizza</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .auth-layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      position: relative;
+    }
+    .auth-bg {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(232,71,42,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .auth-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+    }
+    .auth-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-bottom: 0.25rem;
+    }
+    .auth-logo span { color: var(--accent); }
+    .auth-tabs {
+      display: flex;
+      gap: 0;
+      margin: 1.5rem 0;
+      background: var(--bg3);
+      border-radius: 8px;
+      padding: 3px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 0.55rem;
+      text-align: center;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-tab.active {
+      background: var(--bg2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .divider {
+      text-align: center;
+      color: var(--text2);
+      font-size: 0.8rem;
+      position: relative;
+      margin: 1.25rem 0;
+    }
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      position: relative;
+      background: var(--bg2);
+      padding: 0 0.75rem;
+    }
+    .student-info {
+      background: rgba(240,165,0,0.07);
+      border: 1px solid rgba(240,165,0,0.2);
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      font-size: 0.82rem;
+      color: var(--text2);
+      line-height: 1.5;
+      margin-top: 1rem;
+    }
+    .student-info strong { color: var(--accent2); }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text2);
+      font-size: 0.85rem;
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<div class="auth-bg"></div>
+
+<div class="auth-layout">
+  <div style="width:100%;max-width:420px">
+    <a href="index.html" class="back-link">← Takaisin etusivulle</a>
+
+    <div class="auth-card">
+      <div class="auth-logo">Metro<span>.</span>Pizza</div>
+      <p style="color:var(--text2);font-size:0.88rem;margin-bottom:0">Tilaa helposti kampuksella</p>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login">Kirjaudu</button>
+        <button class="auth-tab" id="tab-register">Rekisteröidy</button>
+      </div>
+
+      <!-- Login form -->
+      <div id="form-login">
+        <div class="form-group">
+          <label for="email">Sähköposti</label>
+          <input type="email" id="email" placeholder="etu.suku@metropolia.fi" />
+        </div>
+        <div class="form-group">
+          <label for="password">Salasana</label>
+          <input type="password" id="password" placeholder="••••••••" />
+        </div>
+        <button class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.5rem">
+          Kirjaudu sisään
+        </button>
+
+        <div class="divider"><span>tai</span></div>
+
+        <button class="btn btn-outline" style="width:100%;padding:0.75rem" onclick="document.getElementById('tab-register').click()">
+          Luo uusi tili
+        </button>
+      </div>
+
+      <!-- Register form (hidden) -->
+      <div id="form-register" style="display:none">
+        <div class="form-group">
+          <label>Etunimi</label>
+          <input type="text" placeholder="Mikael" />
+        </div>
+        <div class="form-group">
+          <label>Sukunimi</label>
+          <input type="text" placeholder="Virtanen" />
+        </div>
+        <div class="form-group">
+          <label>Sähköposti</label>
+          <input type="email" placeholder="etu.suku@metropolia.fi" />
+        </div>
+        <div class="form-group">
+          <label>Opiskelijanumero <span style="color:var(--text2);font-weight:300">(valinnainen)</span></label>
+          <input type="text" placeholder="esim. A2300123" />
+        </div>
+        <div class="form-group">
+          <label>Salasana</label>
+          <input type="password" placeholder="Vähintään 8 merkkiä" />
+        </div>
+        <button class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.25rem">
+          Luo tili
+        </button>
+
+        <div class="student-info">
+          <strong>Opiskelija-alennukset:</strong> Syöttämällä opiskelijanumerosi saat automaattisesti opiskelijahinnat kaikille tuotteille.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const tabLogin = document.getElementById('tab-login');
+  const tabReg   = document.getElementById('tab-register');
+  const fLogin   = document.getElementById('form-login');
+  const fReg     = document.getElementById('form-register');
+
+  tabLogin.addEventListener('click', () => {
+    tabLogin.classList.add('active'); tabReg.classList.remove('active');
+    fLogin.style.display = 'block'; fReg.style.display = 'none';
+  });
+  tabReg.addEventListener('click', () => {
+    tabReg.classList.add('active'); tabLogin.classList.remove('active');
+    fReg.style.display = 'block'; fLogin.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>
