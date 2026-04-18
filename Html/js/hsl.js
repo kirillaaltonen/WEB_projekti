@@ -1,45 +1,28 @@
-/**
- * hsl.js
- * Plans a route from user's current location to Metro Pizza (Metropolia Bulevardi)
- * Uses HSL Digitransit GraphQL API: https://api.digitransit.fi/routing/v2/hsl/gtfs/v1
- */
-
-const HSL_API   = 'https://api.digitransit.fi/routing/v2/hsl/gtfs/v1';
-
-/** Fixed destination: Metro Pizza, Metropolia Bulevardi */
 const DESTINATION = { lat: 60.1650, lon: 24.9340 };
 
-/** Transport mode display names */
 const MODE_LABEL = {
-  WALK:   'Kävely',
-  BUS:    'Bussi',
-  TRAM:   'Ratikka',
+  WALK: 'Kävely',
+  BUS: 'Bussi',
+  TRAM: 'Ratikka',
   SUBWAY: 'Metro',
-  RAIL:   'Juna',
-  FERRY:  'Lautta',
+  RAIL: 'Juna',
+  FERRY: 'Lautta',
 };
 
-/** Transport mode colors (official HSL colors) */
 const MODE_COLOR = {
-  WALK:   '#888780',
-  BUS:    '#007ac9',
-  TRAM:   '#009950',
+  WALK: '#888780',
+  BUS: '#007ac9',
+  TRAM: '#009950',
   SUBWAY: '#ff5a1e',
-  RAIL:   '#8c4799',
-  FERRY:  '#007ac9',
+  RAIL: '#8c4799',
+  FERRY: '#007ac9',
 };
 
-/**
- * Query HSL routing API for itineraries between two points
- * @param {{ lat: number, lon: number }} from - user location
- * @param {{ lat: number, lon: number }} to   - destination
- * @returns {Promise<Object>} raw API response
- */
-async function fetchRoute(from, to) {
-  const query = `{
+const ROUTE_QUERY = `
+  query RoutePlan($fromLat: Float!, $fromLon: Float!, $toLat: Float!, $toLon: Float!) {
     plan(
-      from: { lat: ${from.lat}, lon: ${from.lon} }
-      to:   { lat: ${to.lat},   lon: ${to.lon}   }
+      from: { lat: $fromLat, lon: $fromLon }
+      to: { lat: $toLat, lon: $toLon }
       numItineraries: 3
       transportModes: [
         { mode: BUS },
@@ -59,28 +42,40 @@ async function fetchRoute(from, to) {
           startTime
           endTime
           from { name }
-          to   { name }
+          to { name }
           route { shortName }
         }
       }
     }
-  }`;
+  }
+`;
 
-  const res = await fetch(HSL_API, {
+async function fetchRoute(from, to) {
+  const res = await fetch('http://localhost:3000/api/route', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      query: ROUTE_QUERY,
+      variables: {
+        fromLat: from.lat,
+        fromLon: from.lon,
+        toLat: to.lat,
+        toLon: to.lon
+      }
+    })
   });
 
-  if (!res.ok) throw new Error(`HSL API vastasi: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || `HSL API vastasi: ${res.status}`);
+  }
+
+  return data;
 }
 
-/**
- * Format seconds to "X min" or "X h Y min"
- * @param {number} secs
- * @returns {string}
- */
 function formatDuration(secs) {
   const mins = Math.round(secs / 60);
   if (mins < 60) return `${mins} min`;
@@ -89,42 +84,31 @@ function formatDuration(secs) {
   return m > 0 ? `${h} h ${m} min` : `${h} h`;
 }
 
-/**
- * Format Unix timestamp (milliseconds) to HH:MM
- * @param {number} ms
- * @returns {string}
- */
 function formatTime(ms) {
   const d = new Date(ms);
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
-/**
- * Build HTML card for one itinerary
- * @param {Object} itin - itinerary object from API
- * @returns {string} HTML string
- */
 function renderItinerary(itin) {
   const totalMins = Math.round(itin.duration / 60);
   const startTime = formatTime(itin.legs[0].startTime);
-  const endTime   = formatTime(itin.legs[itin.legs.length - 1].endTime);
-  const walkKm    = (itin.walkDistance / 1000).toFixed(1);
+  const endTime = formatTime(itin.legs[itin.legs.length - 1].endTime);
+  const walkKm = (itin.walkDistance / 1000).toFixed(1);
 
-  // Summary pills: walk → bus 14 → walk etc.
   const pills = itin.legs.map(leg => {
     const color = MODE_COLOR[leg.mode] || '#888';
     const label = leg.mode === 'WALK'
       ? `🚶 ${Math.round(leg.duration / 60)} min`
       : (leg.route?.shortName || MODE_LABEL[leg.mode] || leg.mode);
+
     return `<span style="background:${color}25;color:${color};border:1px solid;font-size:0.72rem;font-weight:700;padding:0.2rem 0.55rem;border-radius:4px;white-space:nowrap">${label}</span>`;
   }).join(`<span style="color:var(--text2);font-size:0.75rem;padding:0 2px">›</span>`);
 
-  // Step-by-step rows
   const steps = itin.legs.map(leg => {
-    const color    = MODE_COLOR[leg.mode] || '#888';
+    const color = MODE_COLOR[leg.mode] || '#888';
     const modeName = MODE_LABEL[leg.mode] || leg.mode;
-    const dur      = formatDuration(leg.duration);
-    const detail   = leg.mode === 'WALK'
+    const dur = formatDuration(leg.duration);
+    const detail = leg.mode === 'WALK'
       ? `Kävele ${Math.round(leg.distance)} m kohti ${leg.to.name}`
       : `${modeName}${leg.route?.shortName ? ` ${leg.route.shortName}` : ''} → ${leg.to.name}`;
 
@@ -149,65 +133,70 @@ function renderItinerary(itin) {
     </div>`;
 }
 
-/**
- * Main entry point — ask for geolocation, fetch route, render results.
- * Called by the "Näytä reitti" button in sijainti.html
- */
-function planRoute() {
-  const container = document.getElementById('route-result');
-  const btn       = document.getElementById('routeBtn');
-
-  btn.disabled    = true;
-  btn.textContent = 'Haetaan sijaintiasi...';
-  container.innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:0.75rem;padding:0.5rem 0">
-      <div style="height:90px;background:var(--bg3);border-radius:8px;animation:shimmer 1.5s ease-in-out infinite"></div>
-      <div style="height:90px;background:var(--bg3);border-radius:8px;animation:shimmer 1.5s ease-in-out infinite"></div>
-      <div style="height:90px;background:var(--bg3);border-radius:8px;animation:shimmer 1.5s ease-in-out infinite"></div>
-    </div>`;
-
-  if (!navigator.geolocation) {
-    container.innerHTML = showError('Selaimesi ei tue paikannusta.');
-    resetBtn(btn);
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    async (pos) => {
-      btn.textContent = 'Lasketaan reitti...';
-      const from = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-
-      try {
-        const data  = await fetchRoute(from, DESTINATION);
-        const itins = data?.data?.plan?.itineraries || [];
-
-        if (itins.length === 0) {
-          container.innerHTML = showError('Reittejä ei löytynyt. Oletko HSL-alueella?');
-        } else {
-          container.innerHTML = itins.map(renderItinerary).join('');
-        }
-      } catch (_err) {
-        container.innerHTML = showError('Reittihaku epäonnistui. Tarkista verkkoyhteys.');
-      } finally {
-        btn.disabled    = false;
-        btn.textContent = '📍 Päivitä reitti';
-      }
-    },
-    () => {
-      container.innerHTML = showError('Paikannus estetty. Salli sijainti selaimen asetuksissa ja yritä uudelleen.');
-      resetBtn(btn);
-    },
-    { timeout: 10000, enableHighAccuracy: false }
-  );
-}
-
-/** @param {string} msg */
 function showError(msg) {
   return `<div style="background:rgba(232,71,42,0.07);border:1px solid rgba(232,71,42,0.2);border-radius:var(--radius);padding:1rem;color:var(--text2);font-size:0.85rem">⚠️ ${msg}</div>`;
 }
 
-/** @param {HTMLButtonElement} btn */
 function resetBtn(btn) {
-  btn.disabled    = false;
-  btn.textContent = '📍 Näytä reitti';
+  btn.disabled = false;
+  btn.textContent = '📍 Näytä reitti sijainnistani';
+}
+
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Selaimesi ei tue sijainnin hakua.'));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        resolve({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude
+        });
+      },
+      () => reject(new Error('Sijainnin käyttö estettiin tai haku epäonnistui.')),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000
+      }
+    );
+  });
+}
+
+async function planRoute() {
+  const btn = document.getElementById('routeBtn');
+  const result = document.getElementById('route-result');
+
+  if (!btn || !result) return;
+
+  btn.disabled = true;
+  btn.textContent = 'Haetaan reittiä...';
+  result.innerHTML = '';
+
+  try {
+    const from = await getCurrentPosition();
+    const data = await fetchRoute(from, DESTINATION);
+
+    const itineraries = data?.data?.plan?.itineraries || [];
+
+    if (!itineraries.length) {
+      result.innerHTML = showError('Reittiä ei löytynyt nykyisestä sijainnistasi.');
+      return;
+    }
+
+    result.innerHTML = itineraries.map(renderItinerary).join('');
+  } catch (err) {
+    console.error(err);
+    result.innerHTML = showError(err.message || 'Reittihaku epäonnistui.');
+  } finally {
+    resetBtn(btn);
+  }
+}
+
+const btn = document.getElementById('routeBtn');
+if (btn) {
+  btn.addEventListener('click', planRoute);
 }
