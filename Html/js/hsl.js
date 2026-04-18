@@ -209,5 +209,5 @@ function showError(msg) {
 /** @param {HTMLButtonElement} btn */
 function resetBtn(btn) {
   btn.disabled    = false;
-  btn.textContent = '📍 Näytä reitti sijainnistani';
+  btn.textContent = '📍 Näytä reitti';
 }
