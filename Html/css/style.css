@@ -554,3 +554,72 @@ input:focus, select:focus, textarea:focus {
   .sidebar { display: none; }
   .admin-content { padding: 5rem 1.25rem 2rem; }
 }
+.location-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+@media (max-width: 900px) {
+  .location-grid { grid-template-columns: 1fr; }
+}
+
+.map-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 340px;
+}
+
+.map-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  filter: grayscale(20%) invert(88%) hue-rotate(180deg);
+}
+
+.address-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.address-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.address-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+
+.address-row:last-child { border-bottom: none; }
+.address-label { color: var(--text2); min-width: 90px; flex-shrink: 0; }
+
+.route-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.route-panel h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.1rem;
+}
+
+.route-panel > p {
+  color: var(--text2);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+}
