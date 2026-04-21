@@ -1,10 +1,10 @@
-const mysql = require("mysql12");
-//muista omat tunnukset tähä
+import mysql from "mysql2";
+
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "password",
+  password: "salasana",
   database: "metro_pizza",
 });
 
-module.exports = pool.promise();
+export default pool.promise();
