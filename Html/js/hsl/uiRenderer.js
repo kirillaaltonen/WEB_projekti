@@ -1,19 +1,16 @@
 /**
- * uiRenderer.js
  * Renders HSL route data into DOM elements using CSS classes from style.css.
- * No inline styles here — all visual rules live in css/style.css (.hsl-*)
  */
 
 const MODE_LABEL = {
-  WALK:   'Kävely',
-  BUS:    'Bussi',
-  TRAM:   'Ratikka',
-  SUBWAY: 'Metro',
-  RAIL:   'Juna',
-  FERRY:  'Lautta',
+  WALK: "Kävely",
+  BUS: "Bussi",
+  TRAM: "Ratikka",
+  SUBWAY: "Metro",
+  RAIL: "Juna",
+  FERRY: "Lautta",
 };
 
-/** @param {number} secs @returns {string} */
 function formatDuration(secs) {
   const mins = Math.round(secs / 60);
   if (mins < 60) return `${mins} min`;
@@ -22,48 +19,46 @@ function formatDuration(secs) {
   return m > 0 ? `${h} h ${m} min` : `${h} h`;
 }
 
-/** @param {number} ms @returns {string} */
 function formatTime(ms) {
   const d = new Date(ms);
-  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
-/**
- * Build one itinerary card.
- * @param {Object} itin
- * @param {number} index  0 = fastest
- * @returns {string} HTML
- */
 function renderItinerary(itin, index) {
   const totalMins = Math.round(itin.duration / 60);
   const startTime = formatTime(itin.legs[0].startTime);
-  const endTime   = formatTime(itin.legs[itin.legs.length - 1].endTime);
-  const walkKm    = (itin.walkDistance / 1000).toFixed(1);
+  const endTime = formatTime(itin.legs[itin.legs.length - 1].endTime);
+  const walkKm = (itin.walkDistance / 1000).toFixed(1);
 
-  const fastestBadge = index === 0
-    ? `<span class="hsl-fastest">NOPEIN</span>`
-    : '';
+  const fastestBadge =
+    index === 0 ? `<span class="hsl-fastest">NOPEIN</span>` : "";
 
-  const pills = itin.legs.map(leg => {
-    const label = leg.mode === 'WALK'
-      ? `🚶 ${Math.round(leg.duration / 60)} min`
-      : (leg.route?.shortName || MODE_LABEL[leg.mode] || leg.mode);
-    return `<span class="hsl-pill" data-mode="${leg.mode}">${label}</span>`;
-  }).join(`<span class="hsl-pill-sep">›</span>`);
+  const pills = itin.legs
+    .map((leg) => {
+      const label =
+        leg.mode === "WALK"
+          ? `🚶 ${Math.round(leg.duration / 60)} min`
+          : leg.route?.shortName || MODE_LABEL[leg.mode] || leg.mode;
+      return `<span class="hsl-pill" data-mode="${leg.mode}">${label}</span>`;
+    })
+    .join(`<span class="hsl-pill-sep">›</span>`);
 
-  const steps = itin.legs.map(leg => {
-    const modeName = MODE_LABEL[leg.mode] || leg.mode;
-    const detail   = leg.mode === 'WALK'
-      ? `Kävele ${Math.round(leg.distance)} m → ${leg.to.name}`
-      : `${modeName}${leg.route?.shortName ? ` ${leg.route.shortName}` : ''} → ${leg.to.name}`;
+  const steps = itin.legs
+    .map((leg) => {
+      const modeName = MODE_LABEL[leg.mode] || leg.mode;
+      const detail =
+        leg.mode === "WALK"
+          ? `Kävele ${Math.round(leg.distance)} m → ${leg.to.name}`
+          : `${modeName}${leg.route?.shortName ? ` ${leg.route.shortName}` : ""} → ${leg.to.name}`;
 
-    return `
+      return `
       <div class="hsl-step">
         <span class="hsl-step-mode" data-mode="${leg.mode}">${modeName}</span>
         <span class="hsl-step-detail">${detail}</span>
         <span class="hsl-step-dur">${formatDuration(leg.duration)}</span>
       </div>`;
-  }).join('');
+    })
+    .join("");
 
   return `
     <div class="hsl-card">
@@ -112,7 +107,7 @@ function showError(el, msg) {
 
 /** @param {HTMLElement} el @param {Object[]} itineraries */
 function showItineraries(el, itineraries) {
-  el.innerHTML = itineraries.map(renderItinerary).join('');
+  el.innerHTML = itineraries.map(renderItinerary).join("");
 }
 
 export { showSpinner, showNoRoutes, showError, showItineraries };
