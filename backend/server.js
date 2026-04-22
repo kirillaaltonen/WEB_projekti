@@ -4,8 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config();
-console.log("HSL key loaded:", process.env.HSL_API_KEY);
-console.log("Key length:", process.env.HSL_API_KEY?.length);
 
 const app = express();
 
