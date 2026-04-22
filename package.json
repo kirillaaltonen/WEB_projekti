@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "copy-webpack-plugin": "^11.0.0",
+    "copy-webpack-plugin": "^14.0.0",
     "html-webpack-plugin": "^5.6.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.8.3",
@@ -30,7 +30,6 @@
     "express": "^4.22.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.22.2",
-    "node-fetch": "^3.3.2",
-    "sqlite3": "^6.0.1"
+    "node-fetch": "^3.3.2"
   }
 }
