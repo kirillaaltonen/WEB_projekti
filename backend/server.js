@@ -7,6 +7,8 @@ import ordersRoutes from "./routes/orders.js";
 
 dotenv.config();
 
+console.log("JWT_SECRET ladattu:", process.env.JWT_SECRET ? "Kyllä" : "Ei");
+
 const app = express();
 
 app.use(cors());
