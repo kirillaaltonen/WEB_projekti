@@ -4,6 +4,7 @@
   "description": "",
   "private": true,
   "license": "",
+  "type": "module",
   "author": "",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm start\"",
