@@ -60,16 +60,27 @@ router.put("/orders/:id", verifyAdmin, async (req, res) => {
 
 // POST /api/admin/menu - Lisää uusi tuote
 router.post("/menu", verifyAdmin, async (req, res) => {
-  const { nimi, kuvaus, hinta, kategoria } = req.body;
+  // Lisätty viikonpaiva ja erityisruokavaliot vastaanottoon
+  const { nimi, kuvaus, hinta, kategoria, viikonpaiva, erityisruokavaliot } =
+    req.body;
+
   try {
     const [result] = await db.query(
-      "INSERT INTO TUOTTEET (nimi, kuvaus, hinta, kategoria) VALUES (?, ?, ?, ?)",
-      [nimi, kuvaus, hinta, kategoria],
+      "INSERT INTO TUOTTEET (nimi, kuvaus, hinta, kategoria, viikonpaiva, erityisruokavaliot) VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        nimi,
+        kuvaus,
+        hinta,
+        kategoria,
+        viikonpaiva || null,
+        erityisruokavaliot || null,
+      ],
     );
     res
       .status(201)
       .json({ message: "Tuote lisätty", tuote_id: result.insertId });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Tuotteen lisäys epäonnistui" });
   }
 });
