@@ -31,6 +31,7 @@ app.post("/api/route", async (req, res) => {
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Server error", details: err.message });
   }
 });
@@ -39,9 +40,10 @@ import db from "./db.js";
 
 app.get("/api/menu", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM tuotteet ORDER BY kategoria");
+    const [rows] = await db.query("SELECT * FROM TUOTTEET ORDER BY kategoria");
     res.json(rows);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Tietokantavirhe" });
   }
 });
@@ -49,7 +51,7 @@ app.get("/api/menu", async (req, res) => {
 app.get("/api/menu/lounas", async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT * FROM tuotteet WHERE kategoria = 'lounas' ORDER BY viikonpaiva",
+      "SELECT * FROM TUOTTEET WHERE kategoria = 'lounas' ORDER BY viikonpaiva",
     );
 
     const lounaslista = {};
