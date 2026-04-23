@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db");
+const db = require("../db.js");
 
 /**
  * @api {get} /api/menu Hae koko ruokalista

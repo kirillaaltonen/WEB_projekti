@@ -26,73 +26,64 @@
       <!-- Login form -->
       <div id="form-login">
         <div class="form-group">
-          <label for="email">Sähköposti</label>
-          <input type="email" id="email" placeholder="etu.suku@metropolia.fi" />
+          <label for="login-email">Sähköposti</label>
+          <input type="email" id="login-email" placeholder="etu.suku@metropolia.fi" />
         </div>
         <div class="form-group">
-          <label for="password">Salasana</label>
-          <input type="password" id="password" placeholder="••••••••" />
+          <label for="login-password">Salasana</label>
+          <input type="password" id="login-password" placeholder="••••••••" />
         </div>
-        <button class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.5rem">
+        <button id="login-btn" class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.5rem">
           Kirjaudu sisään
         </button>
 
         <div class="divider"><span>tai</span></div>
 
-        <button class="btn btn-outline" style="width:100%;padding:0.75rem" onclick="document.getElementById('tab-register').click()">
+        <button class="btn btn-outline" style="width:100%;padding:0.75rem" id="goto-register">
           Luo uusi tili
         </button>
       </div>
 
-      <!-- Register form (hidden) -->
+      <!-- Register form -->
       <div id="form-register" style="display:none">
         <div class="form-group">
-          <label>Etunimi</label>
-          <input type="text" placeholder="Mikael" />
+          <label for="register-etunimi">Etunimi</label>
+          <input type="text" id="register-etunimi" placeholder="Mikael" />
         </div>
         <div class="form-group">
-          <label>Sukunimi</label>
-          <input type="text" placeholder="Virtanen" />
+          <label for="register-sukunimi">Sukunimi</label>
+          <input type="text" id="register-sukunimi" placeholder="Virtanen" />
         </div>
         <div class="form-group">
-          <label>Sähköposti</label>
-          <input type="email" placeholder="etu.suku@metropolia.fi" />
+          <label for="register-email">Sähköposti</label>
+          <input type="email" id="register-email" placeholder="etu.suku@metropolia.fi" />
         </div>
         <div class="form-group">
-          <label>Opiskelijanumero <span style="color:var(--text2);font-weight:300">(valinnainen)</span></label>
-          <input type="text" placeholder="esim. A2300123" />
+          <label for="register-opiskelijanumero">
+            Opiskelijanumero
+            <span style="color:var(--text2);font-weight:300">(valinnainen)</span>
+          </label>
+          <input type="text" id="register-opiskelijanumero" placeholder="esim. A2300123" />
         </div>
         <div class="form-group">
-          <label>Salasana</label>
-          <input type="password" placeholder="Vähintään 8 merkkiä" />
+          <label for="register-password">Salasana</label>
+          <input type="password" id="register-password" placeholder="Vähintään 8 merkkiä" />
         </div>
-        <button class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.25rem">
+        <button id="register-btn" class="btn btn-primary" style="width:100%;padding:0.8rem;font-size:1rem;margin-top:0.25rem">
           Luo tili
         </button>
 
         <div class="student-info">
-          <strong>Opiskelija-alennukset:</strong> Syöttämällä opiskelijanumerosi saat automaattisesti opiskelijahinnat kaikille tuotteille.
+          <strong>Opiskelija-alennukset:</strong>
+          Syöttämällä opiskelijanumerosi saat automaattisesti opiskelijahinnat kaikille tuotteille.
         </div>
       </div>
+
     </div>
   </div>
 </div>
 
-<script>
-  const tabLogin = document.getElementById('tab-login');
-  const tabReg   = document.getElementById('tab-register');
-  const fLogin   = document.getElementById('form-login');
-  const fReg     = document.getElementById('form-register');
-
-  tabLogin.addEventListener('click', () => {
-    tabLogin.classList.add('active'); tabReg.classList.remove('active');
-    fLogin.style.display = 'block'; fReg.style.display = 'none';
-  });
-  tabReg.addEventListener('click', () => {
-    tabReg.classList.add('active'); tabLogin.classList.remove('active');
-    fReg.style.display = 'block'; fLogin.style.display = 'none';
-  });
-</script>
+<script src="js/auth.js"></script>
 
 </body>
 </html>

@@ -29,9 +29,9 @@ const verifyAdmin = (req, res, next) => {
 router.get("/orders", verifyAdmin, async (req, res) => {
   try {
     const [rows] = await db.query(`
-      SELECT T.tilaus_id, T.tila, T.paivamaara, K.nimi as asiakas 
-      FROM TILAUKSET T 
-      JOIN KAYTTAJAT K ON T.kayttaja_id = K.kayttaja_id 
+      SELECT T.tilaus_id, T.tila, T.paivamaara, K.nimi as asiakas
+      FROM TILAUKSET T
+      JOIN KAYTTAJAT K ON T.kayttaja_id = K.kayttaja_id
       ORDER BY T.paivamaara DESC
     `);
     res.json(rows);

@@ -2,11 +2,12 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    app: './Html/js/hsl.js',
+    'Html/js/hsl':  './Html/js/hsl.js',
+    'Html/js/auth': './Html/js/auth.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    filename: './Html/js/hsl.js',
+    filename: '[name].js',
   },
 };

@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm start\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open --config webpack.config.dev.js",
-    "build": "webpack --config webpack.config.prod.js",
+    "start": "webpack serve --open --config webpack.config.dev.cjs",
+    "build": "webpack --config webpack.config.prod.cjs",
     "server": "nodemon backend/server.js"
   },
   "devDependencies": {
