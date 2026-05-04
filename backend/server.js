@@ -23,7 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/admin", adminRoutes);
 
-const PORT = 3000;
+const PORT = 3001;
 
 app.post("/api/route", async (req, res) => {
   try {

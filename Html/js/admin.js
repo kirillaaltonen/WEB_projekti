@@ -10,8 +10,22 @@
  *  - Päivittää stat-kortit (tilaukset, odottavat, myynti)
  */
 
-const API = "http://10.120.32.63:3000/api/admin";
+const API = "http://localhost:3001/api/admin";
 // ─── Auth-tarkistus ───────────────────────────────────────────────────────────
+async function haeStats() {
+  const token = getToken();
+
+  const res = await fetch(`${API}/stats`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) return;
+
+  const stats = await res.json();
+
+  const usersEl = document.getElementById("users-count");
+  if (usersEl) usersEl.textContent = stats.usersCount;
+}
 
 function getToken() {
   return localStorage.getItem("token");
@@ -81,7 +95,7 @@ function tilaTeksti(tila) {
 async function haeTilaukset() {
   const token = getToken();
   try {
-    const res = await fetch(`${API}/admin/orders`, {
+    const res = await fetch(`${API}/orders`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -105,7 +119,7 @@ async function haeTilaukset() {
 async function paivitaTila(tilausId, uusiTila, riviEl) {
   const token = getToken();
   try {
-    const res = await fetch(`${API}/admin/orders/${tilausId}`, {
+    const res = await fetch(`${API}/orders/${tilausId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -268,12 +282,13 @@ async function alusta() {
   const tilaukset = await haeTilaukset();
   renderTilaukset(tilaukset);
   paivitaStats(tilaukset);
+  await haeStats();
 
-  // Automaattinen päivitys 30 sekunnin välein
   setInterval(async () => {
     const paivitetyt = await haeTilaukset();
     renderTilaukset(paivitetyt);
     paivitaStats(paivitetyt);
+    await haeStats();
   }, 30_000);
 }
 

@@ -190,5 +190,16 @@ router.delete("/menu/:id", verifyAdmin, async (req, res) => {
     res.status(500).json({ error: "Poisto epäonnistui" });
   }
 });
+router.get("/stats", verifyAdmin, async (req, res) => {
+  try {
+    const [[users]] = await db.query("SELECT COUNT(*) AS count FROM KAYTTAJAT");
 
+    res.json({
+      usersCount: users.count,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Tilastojen haku epäonnistui" });
+  }
+});
 export default router;

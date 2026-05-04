@@ -3,7 +3,7 @@
  * Handles geolocation and HSL routing API calls.
  */
 
-const DESTINATION = { lat: 60.1650, lon: 24.9340 };
+const DESTINATION = { lat: 60.165, lon: 24.934 };
 
 /**
  * Send route request to our Express proxy.
@@ -42,9 +42,9 @@ async function fetchRoute(from, to) {
     }
   }`;
 
-  const res = await fetch('http://localhost:3000/api/route', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const res = await fetch("http://localhost:3001/api/route", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query }),
   });
 
@@ -62,14 +62,15 @@ async function fetchRoute(from, to) {
 function getCurrentPosition() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error('Selaimesi ei tue sijaintia.'));
+      reject(new Error("Selaimesi ei tue sijaintia."));
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
-      pos => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      ()  => reject(new Error('Sijainnin käyttö estettiin tai haku epäonnistui.')),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+      (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+      () =>
+        reject(new Error("Sijainnin käyttö estettiin tai haku epäonnistui.")),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
     );
   });
 }

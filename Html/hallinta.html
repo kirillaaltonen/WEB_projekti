@@ -81,7 +81,8 @@
   <a href="index.html" class="logo">Metro<span>.</span>Pizza</a>
   <ul>
     <li><a href="index.html">← Etusivu</a></li>
-    <li style="font-size:0.8rem;color:var(--text2)">Ylläpitäjä: admin@metropizza.fi</li>
+    <!-- data-admin-name is populated by admin_frontend.js -->
+    <li style="font-size:0.8rem;color:var(--text2)">Ylläpitäjä: <span class="admin-email">–</span></li>
     <li><button class="btn btn-outline" style="font-size:0.85rem;padding:0.5rem 1rem">Kirjaudu ulos</button></li>
   </ul>
 </nav>
@@ -101,27 +102,27 @@
   <main class="admin-content">
     <h2>Koontinäyttö</h2>
 
-    <!-- Stats -->
+    <!-- Stats — ids match admin_frontend.js: paivitaStats() -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="label">Tilaukset tänään</div>
-        <div class="value accent">14</div>
+        <div class="value accent" id="orders-today">–</div>
       </div>
       <div class="stat-card">
         <div class="label">Odottaa käsittelyä</div>
-        <div class="value" style="color:var(--accent2)">3</div>
+        <div class="value" style="color:var(--accent2)" id="orders-pending">–</div>
       </div>
       <div class="stat-card">
         <div class="label">Myynti tänään</div>
-        <div class="value gold">148 €</div>
+        <div class="value gold" id="sales-today">–</div>
       </div>
       <div class="stat-card">
         <div class="label">Rekisteröityneet</div>
-        <div class="value">241</div>
+        <div class="value" id="users-count">–</div>
       </div>
     </div>
 
-    <!-- Orders table -->
+    <!-- Orders table — tbody id required by admin_frontend.js: renderTilaukset() -->
     <div class="table-wrap">
       <div class="table-header">
         <h3>Viimeisimmät tilaukset</h3>
@@ -129,48 +130,22 @@
       </div>
       <table>
         <thead>
-        <tr>
-          <th>Tilaus #</th>
-          <th>Asiakas</th>
-          <th>Tuotteet</th>
-          <th>Aika</th>
-          <th>Summa</th>
-          <th>Tila</th>
-        </tr>
+          <tr>
+            <th>Tilaus #</th>
+            <th>Asiakas</th>
+            <th>Tuotteet</th>
+            <th>Aika</th>
+            <th>Summa</th>
+            <th>Tila</th>
+          </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td style="color:var(--text2)">#1042</td>
-          <td>Mikael Virtanen</td>
-          <td>Metro Special ×1</td>
-          <td style="color:var(--text2)">12:31</td>
-          <td>10,50 €</td>
-          <td><span class="status new">Uusi</span></td>
-        </tr>
-        <tr>
-          <td style="color:var(--text2)">#1041</td>
-          <td>Aino Mäkinen</td>
-          <td>Margherita ×2, Juoma ×2</td>
-          <td style="color:var(--text2)">12:18</td>
-          <td>21,80 €</td>
-          <td><span class="status pending">Valmisteilla</span></td>
-        </tr>
-        <tr>
-          <td style="color:var(--text2)">#1040</td>
-          <td>Jonas Lindqvist</td>
-          <td>Salmone ×1</td>
-          <td style="color:var(--text2)">11:55</td>
-          <td>12,90 €</td>
-          <td><span class="status done">Noudettu</span></td>
-        </tr>
-        <tr>
-          <td style="color:var(--text2)">#1039</td>
-          <td>Ilkka Kylmäniemi</td>
-          <td>Diavola ×1</td>
-          <td style="color:var(--text2)">11:40</td>
-          <td>0,00 €</td>
-          <td><span class="status done">Noudettu</span></td>
-        </tr>
+        <!-- admin_frontend.js writes rows here via renderTilaukset() -->
+        <tbody id="orders-tbody">
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--text2);padding:2rem">
+              Ladataan tilauksia…
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -187,54 +162,55 @@
     <div class="table-wrap">
       <table>
         <thead>
-        <tr>
-          <th>Tuote</th>
-          <th>Kategoria</th>
-          <th>Hinta</th>
-          <th>Erityisruokavaliot</th>
-          <th>Toiminnot</th>
-        </tr>
+          <tr>
+            <th>Tuote</th>
+            <th>Kategoria</th>
+            <th>Hinta</th>
+            <th>Erityisruokavaliot</th>
+            <th>Toiminnot</th>
+          </tr>
         </thead>
-        <tbody>
-        <tr>
-          <td>
-            <strong>Margherita Classica</strong><br>
-            <span style="font-size:0.8rem;color:var(--text2)">Tomaatti, mozzarella, basilika</span>
-          </td>
-          <td style="color:var(--text2)">Pizza</td>
-          <td>8,90 €</td>
-          <td><span class="diet-tag veg">Veg</span> <span class="diet-tag lac">Maitoa</span></td>
-          <td>
-            <button class="icon-btn">Muokkaa</button>
-            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>Metro Special</strong><br>
-            <span style="font-size:0.8rem;color:var(--text2)">Kinkku, sieni, oliivi, paprika</span>
-          </td>
-          <td style="color:var(--text2)">Pizza</td>
-          <td>10,50 €</td>
-          <td><span class="diet-tag lac">Maitoa</span></td>
-          <td>
-            <button class="icon-btn">Muokkaa</button>
-            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>Veggie Delight</strong><br>
-            <span style="font-size:0.8rem;color:var(--text2)">Kasvistopping, pesto, rucola</span>
-          </td>
-          <td style="color:var(--text2)">Pizza</td>
-          <td>9,90 €</td>
-          <td><span class="diet-tag veg">Veg</span> <span class="diet-tag glu">Glu-free</span></td>
-          <td>
-            <button class="icon-btn">Muokkaa</button>
-            <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
-          </td>
-        </tr>
+        <!-- Menu rows are static for now; could be populated dynamically similarly to orders -->
+        <tbody id="menu-tbody">
+          <tr>
+            <td>
+              <strong>Margherita Classica</strong><br>
+              <span style="font-size:0.8rem;color:var(--text2)">Tomaatti, mozzarella, basilika</span>
+            </td>
+            <td style="color:var(--text2)">Pizza</td>
+            <td>8,90 €</td>
+            <td><span class="diet-tag veg">Veg</span> <span class="diet-tag lac">Maitoa</span></td>
+            <td>
+              <button class="icon-btn">Muokkaa</button>
+              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Metro Special</strong><br>
+              <span style="font-size:0.8rem;color:var(--text2)">Kinkku, sieni, oliivi, paprika</span>
+            </td>
+            <td style="color:var(--text2)">Pizza</td>
+            <td>10,50 €</td>
+            <td><span class="diet-tag lac">Maitoa</span></td>
+            <td>
+              <button class="icon-btn">Muokkaa</button>
+              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Veggie Delight</strong><br>
+              <span style="font-size:0.8rem;color:var(--text2)">Kasvistopping, pesto, rucola</span>
+            </td>
+            <td style="color:var(--text2)">Pizza</td>
+            <td>9,90 €</td>
+            <td><span class="diet-tag veg">Veg</span> <span class="diet-tag glu">Glu-free</span></td>
+            <td>
+              <button class="icon-btn">Muokkaa</button>
+              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -248,49 +224,65 @@
     <h3>Lisää uusi tuote</h3>
     <div class="form-group">
       <label>Tuotteen nimi</label>
-      <input type="text" placeholder="esim. Prosciutto e Rucola" />
+      <input type="text" id="new-nimi" placeholder="esim. Prosciutto e Rucola" />
     </div>
     <div class="form-group">
       <label>Kuvaus</label>
-      <textarea rows="2" style="resize:vertical" placeholder="Ainekset lyhyesti..."></textarea>
+      <textarea id="new-kuvaus" rows="2" style="resize:vertical" placeholder="Ainekset lyhyesti..."></textarea>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
       <div class="form-group">
         <label>Hinta (€)</label>
-        <input type="number" step="0.10" placeholder="9.90" />
+        <input type="number" id="new-hinta" step="0.10" placeholder="9.90" />
       </div>
       <div class="form-group">
         <label>Kategoria</label>
-        <select>
-          <option>Pizza</option>
-          <option>Salaatti</option>
-          <option>Juoma</option>
-          <option>Jälkiruoka</option>
+        <select id="new-kategoria">
+          <option value="lounas">Lounas</option>
+          <option value="pizza">Pizza</option>
+          <option value="salaatti">Salaatti</option>
+          <option value="juoma">Juoma</option>
+          <option value="jalkiviisaus">Jälkiruoka</option>
         </select>
       </div>
+    </div>
+    <div class="form-group">
+      <label>Viikonpäivä (lounaalle)</label>
+      <select id="new-viikonpaiva">
+        <option value="">– Ei päiväkohtainen –</option>
+        <option value="maanantai">Maanantai</option>
+        <option value="tiistai">Tiistai</option>
+        <option value="keskiviikko">Keskiviikko</option>
+        <option value="torstai">Torstai</option>
+        <option value="perjantai">Perjantai</option>
+      </select>
     </div>
     <div class="form-group">
       <label>Erityisruokavaliot</label>
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.25rem">
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
-          <input type="checkbox" /> Kasvis
+          <input type="checkbox" id="diet-kasvis" value="kasvis" /> Kasvis
         </label>
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
-          <input type="checkbox" /> Gluteeniton vaihtoehto
+          <input type="checkbox" id="diet-gluteeniton" value="gluteeniton" /> Gluteeniton vaihtoehto
         </label>
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
-          <input type="checkbox" /> Sisältää maitoa
+          <input type="checkbox" id="diet-maitoa" value="maitoa" /> Sisältää maitoa
         </label>
       </div>
     </div>
+    <div id="add-modal-error" style="display:none;color:var(--accent);font-size:0.85rem;margin-top:0.5rem"></div>
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">
         Peruuta
       </button>
-      <button class="btn btn-primary">Tallenna tuote</button>
+      <button class="btn btn-primary" id="save-product-btn">Tallenna tuote</button>
     </div>
   </div>
 </div>
+
+<!-- Admin frontend — handles auth check, orders fetch/render, stat cards, logout, add product -->
+<script src="js/admin.js"></script>
 
 </body>
 </html>
