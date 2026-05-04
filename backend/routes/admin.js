@@ -25,33 +25,96 @@ const verifyAdmin = (req, res, next) => {
 
 // --- TILAUSTEN HALLINTA ---
 
-// GET /api/admin/orders - Hae kaikki tilaukset
+// GET /api/admin/orders
+// Palauttaa kaikki tilaukset kokonaishinnalla ja tuotelistalla
 router.get("/orders", verifyAdmin, async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT T.tilaus_id, T.tila, T.paivamaara, K.nimi as asiakas
+    const [tilaukset] = await db.query(`
+      SELECT
+        T.tilaus_id,
+        T.tila,
+        T.paivamaara,
+        K.nimi AS asiakas
       FROM TILAUKSET T
-      JOIN KAYTTAJAT K ON T.kayttaja_id = K.kayttaja_id
+             JOIN KAYTTAJAT K ON T.kayttaja_id = K.kayttaja_id
       ORDER BY T.paivamaara DESC
     `);
-    res.json(rows);
+
+    if (tilaukset.length === 0) {
+      return res.json([]);
+    }
+
+    const tilausIdt = tilaukset.map((t) => t.tilaus_id);
+    const [rivit] = await db.query(
+      `SELECT
+        TR.tilaus_id,
+        P.nimi,
+        TR.maara,
+        P.hinta,
+        (P.hinta * TR.maara) AS rivi_hinta
+       FROM TILAUSRIVIT TR
+       JOIN TUOTTEET P ON TR.tuote_id = P.tuote_id
+       WHERE TR.tilaus_id IN (?)`,
+      [tilausIdt],
+    );
+
+    const riviMap = {};
+    rivit.forEach((r) => {
+      if (!riviMap[r.tilaus_id]) riviMap[r.tilaus_id] = [];
+      riviMap[r.tilaus_id].push(r);
+    });
+
+    const tulos = tilaukset.map((t) => {
+      const omat = riviMap[t.tilaus_id] || [];
+      const kokonaishinta = omat.reduce(
+        (s, r) => s + parseFloat(r.rivi_hinta),
+        0,
+      );
+      const tuotteetStr = omat.map((r) => `${r.nimi} ×${r.maara}`).join(", ");
+      return {
+        tilaus_id: t.tilaus_id,
+        asiakas: t.asiakas,
+        tila: t.tila,
+        paivamaara: t.paivamaara,
+        kokonaishinta: kokonaishinta.toFixed(2),
+        tuotteet: tuotteetStr || "–",
+      };
+    });
+
+    res.json(tulos);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Tilausten haku epäonnistui" });
   }
 });
 
-// PUT /api/admin/orders/:id - Päivitä tilauksen tila (esim. 'valmis')
+// PUT /api/admin/orders/:id - Päivitä tilauksen tila
 router.put("/orders/:id", verifyAdmin, async (req, res) => {
   const { id } = req.params;
-  const { tila } = req.body; // Esim: { "tila": "valmistettu" }
+  const { tila } = req.body;
+
+  const sallitutTilat = [
+    "odottaa",
+    "valmistetaan",
+    "valmis",
+    "noudettu",
+    "peruutettu",
+  ];
+  if (!sallitutTilat.includes(tila)) {
+    return res.status(400).json({ error: "Virheellinen tila" });
+  }
 
   try {
-    await db.query("UPDATE TILAUKSET SET tila = ? WHERE tilaus_id = ?", [
-      tila,
-      id,
-    ]);
-    res.json({ message: "Tilauksen tila päivitetty" });
+    const [result] = await db.query(
+      "UPDATE TILAUKSET SET tila = ? WHERE tilaus_id = ?",
+      [tila, id],
+    );
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Tilausta ei löydy" });
+    }
+    res.json({ message: "Tilauksen tila päivitetty", tila });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Päivitys epäonnistui" });
   }
 });
@@ -60,16 +123,21 @@ router.put("/orders/:id", verifyAdmin, async (req, res) => {
 
 // POST /api/admin/menu - Lisää uusi tuote
 router.post("/menu", verifyAdmin, async (req, res) => {
-  // Lisätty viikonpaiva ja erityisruokavaliot vastaanottoon
   const { nimi, kuvaus, hinta, kategoria, viikonpaiva, erityisruokavaliot } =
     req.body;
+
+  if (!nimi || !hinta || !kategoria) {
+    return res
+      .status(400)
+      .json({ error: "Nimi, hinta ja kategoria ovat pakollisia" });
+  }
 
   try {
     const [result] = await db.query(
       "INSERT INTO TUOTTEET (nimi, kuvaus, hinta, kategoria, viikonpaiva, erityisruokavaliot) VALUES (?, ?, ?, ?, ?, ?)",
       [
         nimi,
-        kuvaus,
+        kuvaus || null,
         hinta,
         kategoria,
         viikonpaiva || null,
@@ -85,6 +153,32 @@ router.post("/menu", verifyAdmin, async (req, res) => {
   }
 });
 
+// PUT /api/admin/menu/:id - Muokkaa tuotetta
+router.put("/menu/:id", verifyAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { nimi, kuvaus, hinta, kategoria, viikonpaiva, erityisruokavaliot } =
+    req.body;
+
+  try {
+    await db.query(
+      "UPDATE TUOTTEET SET nimi=?, kuvaus=?, hinta=?, kategoria=?, viikonpaiva=?, erityisruokavaliot=? WHERE tuote_id=?",
+      [
+        nimi,
+        kuvaus || null,
+        hinta,
+        kategoria,
+        viikonpaiva || null,
+        erityisruokavaliot || null,
+        id,
+      ],
+    );
+    res.json({ message: "Tuote päivitetty" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Päivitys epäonnistui" });
+  }
+});
+
 // DELETE /api/admin/menu/:id - Poista tuote
 router.delete("/menu/:id", verifyAdmin, async (req, res) => {
   const { id } = req.params;
@@ -92,6 +186,7 @@ router.delete("/menu/:id", verifyAdmin, async (req, res) => {
     await db.query("DELETE FROM TUOTTEET WHERE tuote_id = ?", [id]);
     res.json({ message: "Tuote poistettu" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Poisto epäonnistui" });
   }
 });
