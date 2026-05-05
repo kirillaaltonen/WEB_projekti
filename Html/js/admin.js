@@ -283,6 +283,7 @@ async function alusta() {
   renderTilaukset(tilaukset);
   paivitaStats(tilaukset);
   await haeStats();
+  await haeRuokalista();
 
   setInterval(async () => {
     const paivitetyt = await haeTilaukset();
@@ -293,3 +294,104 @@ async function alusta() {
 }
 
 document.addEventListener("DOMContentLoaded", alusta);
+
+// ─── Uuden tuotteen lisääminen ───────────────────────────────────────────────
+
+async function lisaaTuote() {
+  const nimi = document.getElementById("new-nimi").value;
+  const kuvaus = document.getElementById("new-kuvaus").value;
+  const hinta = document.getElementById("new-hinta").value;
+  const kategoria = document.getElementById("new-kategoria").value;
+  const viikonpaiva = document.getElementById("new-viikonpaiva").value;
+
+  // Kerätään valitut erityisruokavaliot taulukkoon
+  const dietit = [];
+  if (document.getElementById("diet-kasvis").checked) dietit.push("kasvis");
+  if (document.getElementById("diet-gluteeniton").checked)
+    dietit.push("gluteeniton");
+  if (document.getElementById("diet-maitoa").checked) dietit.push("maitoa");
+
+  const token = getToken();
+  const errorEl = document.getElementById("add-modal-error");
+
+  try {
+    const res = await fetch(`${API}/menu`, {
+      // POST http://localhost:3001/api/admin/menu
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        nimi,
+        kuvaus, // HUOM: Tietokannassa on kuvaus-sarake
+        hinta: parseFloat(hinta),
+        kategoria,
+        viikonpaiva, // Backend odottaa tätä dokumentaation mukaan
+        erityisruokavaliot: dietit.join(", "), // Lähetetään merkkijonona
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Tuotteen lisäys epäonnistui");
+    }
+
+    alert("Tuote lisätty onnistuneesti!");
+    document.getElementById("add-modal").classList.remove("open");
+    await haeRuokalista();
+  } catch (err) {
+    console.error("Virhe tuotetta lisättäessä:", err);
+    errorEl.textContent = err.message;
+    errorEl.style.display = "block";
+  }
+}
+
+// Sido funktio tallennusnappiin, kun DOM on ladattu
+document.addEventListener("DOMContentLoaded", () => {
+  const saveBtn = document.getElementById("save-product-btn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", lisaaTuote);
+  }
+});
+
+// ─── Ruokalistan haku ja renderöinti ──────────────────────────────────────────
+
+async function haeRuokalista() {
+  try {
+    const res = await fetch("http://localhost:3001/api/menu"); // Hae koko ruokalista[cite: 5]
+    if (!res.ok) throw new Error("Ruokalistan haku epäonnistui");
+    const data = await res.json();
+
+    // API palauttaa datan kategorioittain, yhdistetään ne yhdeksi listaksi[cite: 5]
+    const tuotteet = Object.values(data).flat();
+    renderRuokalista(tuotteet);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function renderRuokalista(tuotteet) {
+  const tbody = document.getElementById("menu-tbody");
+  if (!tbody) return;
+
+  tbody.innerHTML = ""; // Tyhjennetään staattiset esimerkkirivit
+
+  tuotteet.forEach((t) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>
+        <strong>${t.nimi}</strong><br>
+        <span style="font-size:0.8rem;color:var(--text2)">${t.kuvaus || "Ei kuvausta"}</span>
+      </td>
+      <td style="color:var(--text2)">${t.kategoria}</td>
+      <td>${formatHinta(t.hinta)}</td>
+      <td>${t.erityisruokavaliot || "–"}</td>
+      <td>
+        <button class="icon-btn">Muokkaa</button>
+        <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem" onclick="poistaTuote(${t.tuote_id})">Poista</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
