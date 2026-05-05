@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import authRoutes from "./routes/auth.js";
 import ordersRoutes from "./routes/orders.js";
 import adminRoutes from "./routes/admin.js";
+import menuRoutes from "./routes/menu.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", ordersRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/menu", menuRoutes);
 
 const PORT = 3001;
 
@@ -55,25 +57,6 @@ app.get("/api/menu", async (req, res) => {
     res.json(rows);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Tietokantavirhe" });
-  }
-});
-
-app.get("/api/menu/lounas", async (req, res) => {
-  try {
-    const [rows] = await db.query(
-      "SELECT * FROM TUOTTEET WHERE kategoria = 'lounas' ORDER BY viikonpaiva",
-    );
-
-    const lounaslista = {};
-    rows.forEach((tuote) => {
-      const paiva = tuote.viikonpaiva;
-      if (!lounaslista[paiva]) lounaslista[paiva] = [];
-      lounaslista[paiva].push(tuote);
-    });
-
-    res.json(lounaslista);
-  } catch (err) {
     res.status(500).json({ error: "Tietokantavirhe" });
   }
 });

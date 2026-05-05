@@ -1,34 +1,36 @@
-const express = require("express");
+import express from "express";
+import db from "../db.js";
+
 const router = express.Router();
-const db = require("../db.js");
 
 /**
- * @api {get} /api/menu Hae koko ruokalista
- * @apiDescription Palauttaa kaikki tuotteet JSON-muodossa kategorioittain
+ * GET /api/menu
+ * Palauttaa kaikki tuotteet JSON-muodossa.
  */
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM tuotteet ORDER BY kategoria");
+    const [rows] = await db.query("SELECT * FROM TUOTTEET ORDER BY kategoria");
     res.json(rows);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Tietokantavirhe" });
   }
 });
 
 /**
- * @api {get} /api/menu/lounas Hae lounastaulukko viikonpäivittäin
- * @apiDescription Palauttaa lounaslistan ryhmiteltynä viikonpäivän mukaan
+ * GET /api/menu/lounas
+ * Palauttaa lounaslistan ryhmiteltynä viikonpäivän mukaan.
  */
 router.get("/lounas", async (req, res) => {
   try {
     const [rows] = await db.query(
-      "SELECT * FROM tuotteet WHERE kategoria = 'lounas' ORDER BY viikonpaiva",
+      "SELECT * FROM TUOTTEET WHERE kategoria = 'lounas' ORDER BY viikonpaiva",
     );
 
-    // Ryhmitellään viikonpäivän mukaan
     const lounaslista = {};
+
     rows.forEach((tuote) => {
-      const paiva = tuote.viikonpaiva;
+      const paiva = tuote.viikonpaiva || "muu";
       if (!lounaslista[paiva]) {
         lounaslista[paiva] = [];
       }
@@ -37,8 +39,9 @@ router.get("/lounas", async (req, res) => {
 
     res.json(lounaslista);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Tietokantavirhe" });
   }
 });
 
-module.exports = router;
+export default router;

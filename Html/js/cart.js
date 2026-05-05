@@ -9,7 +9,7 @@
  *  - Kirjautumisen tarkistus (JWT localStorage:ssa)
  */
 
-const API = "http://localhost:3001/api/cart";
+const API = "http://localhost:3001/api";
 
 // ─── Tila ────────────────────────────────────────────────────────────────────
 
@@ -23,7 +23,8 @@ function getToken() {
 }
 
 function formatHinta(euroa) {
-  return euroa.toFixed(2).replace(".", ",") + " €";
+  const numero = Number(euroa);
+  return numero.toFixed(2).replace(".", ",") + " €";
 }
 
 // ─── UI-päivitykset ──────────────────────────────────────────────────────────
@@ -236,53 +237,64 @@ function avaaKoriModal() {
  * Odottaa data-tuote-id, data-name ja data-price attribuutteja.
  * Jos niitä ei ole, etsii ne lähimmästä .menu-item -vanhemmasta.
  */
-function sitooAddNapit() {
-  document.querySelectorAll(".add-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const menuItem = btn.closest(".menu-item");
-      if (!menuItem) return;
+function sidoAddNapitys() {
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".add-btn");
+    if (!btn) return;
 
-      // Haetaan tuote_id data-attribuutista tai generoidaan väliaikainen
-      const tuoteId =
-        parseInt(btn.dataset.tuoteId || menuItem.dataset.tuoteId) || null;
-      const nimi =
-        btn.dataset.name ||
-        menuItem.dataset.name ||
-        menuItem.querySelector("h4")?.textContent?.trim() ||
-        "Tuote";
-      const hintaStr =
-        btn.dataset.price ||
-        menuItem.dataset.price ||
-        menuItem.querySelector(".menu-item-price")?.textContent ||
-        "0";
-      const hinta = parseFloat(
-        hintaStr.replace(/[^\d.,]/g, "").replace(",", "."),
-      );
+    const menuItem = btn.closest(".menu-item");
+    if (!menuItem) return;
 
-      // Käytetään tuote_id:tä avaimena. Jos ei ole, käytä nimeä.
-      const avain = tuoteId !== null ? tuoteId : nimi;
+    const tuoteId = Number(btn.dataset.tuoteId || menuItem.dataset.tuoteId);
+    const nimi =
+      btn.dataset.name ||
+      menuItem.dataset.name ||
+      menuItem.querySelector("h4")?.textContent?.trim() ||
+      "Tuote";
 
-      if (kori.has(avain)) {
-        kori.get(avain).maara += 1;
-      } else {
-        kori.set(avain, { tuote_id: tuoteId, nimi, hinta, maara: 1 });
-      }
+    const hintaStr =
+      btn.dataset.price ||
+      menuItem.dataset.price ||
+      menuItem.querySelector(".menu-item-price")?.textContent ||
+      "0";
 
-      paivitaLaskuri();
+    const hinta = Number(
+      String(hintaStr)
+        .replace(/[^\d.,]/g, "")
+        .replace(",", "."),
+    );
 
-      // Visuaalinen palaute napissa
-      const alkupTeksti = btn.textContent;
-      btn.textContent = "✓";
-      btn.style.background = "var(--accent, #e8471a)";
-      btn.style.color = "#fff";
-      btn.style.borderColor = "transparent";
-      setTimeout(() => {
-        btn.textContent = alkupTeksti;
-        btn.style.background = "";
-        btn.style.color = "";
-        btn.style.borderColor = "";
-      }, 800);
-    });
+    if (!tuoteId) {
+      console.error("Tuotteelta puuttuu tuote_id:", { btn, menuItem });
+      naytaKoriViesti("Tuotteen tietoja ei löydy.", "error");
+      return;
+    }
+
+    if (kori.has(tuoteId)) {
+      kori.get(tuoteId).maara += 1;
+    } else {
+      kori.set(tuoteId, {
+        tuote_id: tuoteId,
+        nimi,
+        hinta,
+        maara: 1,
+      });
+    }
+
+    paivitaLaskuri();
+
+    const alkuperainenTeksti = btn.textContent;
+    btn.textContent = "✓";
+    btn.style.background = "var(--accent, #e8471a)";
+    btn.style.color = "#fff";
+    btn.style.borderColor = "transparent";
+
+    setTimeout(() => {
+      btn.textContent = alkuperainenTeksti;
+      btn.style.background = "";
+      btn.style.color = "";
+      btn.style.borderColor = "";
+    }, 800);
   });
 }
 
@@ -412,22 +424,24 @@ async function haeMenuJaAsettaIdt() {
 }
 
 // ─── Alustus ──────────────────────────────────────────────────────────────────
-
-document.addEventListener("DOMContentLoaded", async () => {
-  // Luo kori-modal
+document.addEventListener("DOMContentLoaded", () => {
   luoKoriModal();
 
-  // Hae menu backendistä tuote_id:iden saamiseksi
-  await haeMenuJaAsettaIdt();
-
-  // Sido plus-napit
-  sitooAddNapit();
-
-  // Sido ostoskori-nappi
   document.querySelectorAll(".cart-btn").forEach((btn) => {
     btn.addEventListener("click", avaaKoriModal);
   });
 
-  // Päivitä laskuri
+  paivitaLaskuri();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  luoKoriModal();
+
+  sidoAddNapitys();
+
+  document.querySelectorAll(".cart-btn").forEach((btn) => {
+    btn.addEventListener("click", avaaKoriModal);
+  });
+
   paivitaLaskuri();
 });

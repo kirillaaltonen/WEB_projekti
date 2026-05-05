@@ -128,7 +128,7 @@
 </nav>
 
 <div class="page-header">
-  <div class="section-label">Viikko 17 · 2026</div>
+  <div class="section-label" id="viikko-otsikko">Lounaslista</div>
   <h1 class="section-title" style="margin-bottom:0.75rem">Ruokalista</h1>
   <p style="color:var(--text2);font-size:0.9rem">Tuore, päivittäin vaihtuva lounaslista</p>
 </div>
@@ -152,191 +152,12 @@
       <button class="tab">Laktoositon</button>
     </div>
 
-    <!-- Maanantai -->
-    <div class="day-block">
-      <div class="day-header">
-        <span class="day-name">Maanantai</span>
-        <span style="font-size:0.82rem;color:var(--text2)">9.6.</span>
-      </div>
-      <div class="menu-grid">
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Margherita Classica</h4>
-            <p>Tomaatti, mozzarella, tuore basilika</p>
-            <div class="diet-tags">
-              <span class="diet-tag veg">Veg</span>
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">8,90 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Pollo Pesto</h4>
-            <p>Kana, pestokastike, kirsikkatomaatti, parmesan</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">10,90 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tiistai -->
-    <div class="day-block">
-      <div class="day-header">
-        <span class="day-name">Tiistai</span>
-        <span style="font-size:0.82rem;color:var(--text2)">10.6.</span>
-      </div>
-      <div class="menu-grid">
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Diavola</h4>
-            <p>Salami piccante, tomaatti, mozzarella, chili</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">11,50 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Veggie Delight</h4>
-            <p>Kasvikset, aurinkokuivattu tomaatti, rucolapesto</p>
-            <div class="diet-tags">
-              <span class="diet-tag veg">Veg</span>
-              <span class="diet-tag glu">Glu-free vaihtoehto</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">9,90 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Keskiviikko - TODAY -->
-    <div class="day-block today">
-      <div class="day-header">
-        <span class="day-name">Keskiviikko</span>
-        <span style="font-size:0.82rem;color:var(--text2)">11.6.</span>
-        <span class="today-badge">Tänään</span>
-      </div>
-      <div class="menu-grid">
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Metro Special</h4>
-            <p>Kinkku, sieni, oliivi, paprika, mozzarella</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">10,50 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Quattro Formaggi</h4>
-            <p>Neljä juustoa, hunaja, saksanpähkinä</p>
-            <div class="diet-tags">
-              <span class="diet-tag veg">Veg</span>
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">11,90 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Salmone</h4>
-            <p>Savulohi, kapris, punasipuli, tuorejuusto</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-              <span class="diet-tag glu">Glu-free vaihtoehto</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">12,90 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Torstai -->
-    <div class="day-block">
-      <div class="day-header">
-        <span class="day-name">Torstai</span>
-        <span style="font-size:0.82rem;color:var(--text2)">12.6.</span>
-      </div>
-      <div class="menu-grid">
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Prosciutto e Rucola</h4>
-            <p>Parmankinikku, rucola, parmesan, sitruuna</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">13,50 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Perjantai -->
-    <div class="day-block">
-      <div class="day-header">
-        <span class="day-name">Perjantai</span>
-        <span style="font-size:0.82rem;color:var(--text2)">13.6.</span>
-      </div>
-      <div class="menu-grid">
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Calzone Metro</h4>
-            <p>Täytetty pizza: ricotta, kinkku, sieni</p>
-            <div class="diet-tags">
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">12,50 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-        <div class="menu-item">
-          <div class="menu-item-info">
-            <h4>Bufala</h4>
-            <p>Puhvelinmozzarella, tomaatti, tuore basilika</p>
-            <div class="diet-tags">
-              <span class="diet-tag veg">Veg</span>
-              <span class="diet-tag lac">Maitoa</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.75rem">
-            <div class="menu-item-price">12,00 €</div>
-            <button class="add-btn" aria-label="Lisää koriin">+</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!--
+      Dynaaminen ruokalista.
+      menu.js hakee tuotteet backendistä ja renderöi ne tähän konttiin.
+      Kovakoodatut päiväblokit (Maanantai–Perjantai) on poistettu.
+    -->
+    <div id="dynamic-menu"></div>
 
   </div>
 </section>
@@ -353,7 +174,13 @@
   <p>© 2026 Metro Pizza &nbsp;·&nbsp; <a href="hallinta.html">Ylläpito</a></p>
 </footer>
 
-<!-- Cart functionality — must be last so DOM is ready -->
+<!--
+  TÄRKEÄÄ: menu.js ennen cart.js!
+  menu.js renderöi .add-btn -napit dynaamisesti.
+  cart.js sitoo click-handlerit niihin DOMContentLoaded-tapahtumassa.
+  Jos järjestys on väärä, napit eivät toimi.
+-->
+<script src="js/menu.js"></script>
 <script src="js/cart.js"></script>
 
 </body>
