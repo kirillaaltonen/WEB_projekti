@@ -42,7 +42,7 @@ async function fetchRoute(from, to) {
     }
   }`;
 
-  const res = await fetch("http://10.120.32.74:3001/api/route", {
+  const res = await fetch("http://localhost:3001/api/route", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query }),
