@@ -9,7 +9,7 @@
  *  - Kirjautumisen tarkistus (JWT localStorage:ssa)
  */
 
-const API = "http://localhost:3001/api";
+const API = "http://10.120.32.74:3001/api/cart";
 
 // ─── Tila ────────────────────────────────────────────────────────────────────
 

@@ -10,7 +10,7 @@
  *  - Päivittää stat-kortit (tilaukset, odottavat, myynti)
  */
 
-const API = "http://localhost:3001/api/admin";
+const API = "http://10.120.32.74:3001/api/admin";
 // ─── Auth-tarkistus ───────────────────────────────────────────────────────────
 async function haeStats() {
   const token = getToken();
@@ -316,7 +316,7 @@ async function lisaaTuote() {
 
   try {
     const res = await fetch(`${API}/menu`, {
-      // POST http://localhost:3001/api/admin/menu
+      // POST http://10.120.32.74:3001/api/admin/menu
       method: "POST",
       headers: {
         "Content-Type": "application/json",
