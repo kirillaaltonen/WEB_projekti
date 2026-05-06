@@ -90,44 +90,54 @@
 <div class="admin-layout">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <a href="#" class="active">📊 Koontinäyttö</a>
-    <a href="#">📦 Tilaukset</a>
-    <a href="#">🍕 Ruokalista</a>
-    <a href="#">👥 Käyttäjät</a>
+    <a href="#dashboard" class="active">📊 Koontinäyttö</a>
+    <a href="#orders">📦 Tilaukset</a>
+    <a href="#menu">🍕 Ruokalista</a>
+    <a href="#users">👥 Käyttäjät</a>
   </aside>
 
   <!-- Main content -->
   <main class="admin-content">
-    <h2>Koontinäyttö</h2>
 
-    <!-- Stats — ids match admin_frontend.js: paivitaStats() -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="label">Tilaukset tänään</div>
-        <div class="value accent" id="orders-today">–</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Odottaa käsittelyä</div>
-        <div class="value" style="color:var(--accent2)" id="orders-pending">–</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Myynti tänään</div>
-        <div class="value gold" id="sales-today">–</div>
-      </div>
-      <div class="stat-card">
-        <div class="label">Rekisteröityneet</div>
-        <div class="value" id="users-count">–</div>
-      </div>
-    </div>
+    <!-- Dashboard -->
+    <section class="admin-section" id="dashboard">
+      <h2 class="admin-section-title">Koontinäyttö</h2>
 
-    <!-- Orders table — tbody id required by admin_frontend.js: renderTilaukset() -->
-    <div class="table-wrap">
-      <div class="table-header">
-        <h3>Viimeisimmät tilaukset</h3>
-        <button class="icon-btn">Näytä kaikki</button>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="label">Tilaukset tänään</div>
+          <div class="value accent" id="orders-today">–</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="label">Odottaa käsittelyä</div>
+          <div class="value" style="color:var(--accent2)" id="orders-pending">–</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="label">Myynti tänään</div>
+          <div class="value gold" id="sales-today">–</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="label">Rekisteröityneet</div>
+          <div class="value" id="users-count">–</div>
+        </div>
       </div>
-      <table>
-        <thead>
+    </section>
+
+    <!-- Orders -->
+    <section class="admin-section" id="orders">
+      <h2 class="admin-section-title">Tilaukset</h2>
+
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Viimeisimmät tilaukset</h3>
+          <button class="icon-btn">Näytä kaikki</button>
+        </div>
+
+        <table>
+          <thead>
           <tr>
             <th>Tilaus #</th>
             <th>Asiakas</th>
@@ -136,30 +146,32 @@
             <th>Summa</th>
             <th>Tila</th>
           </tr>
-        </thead>
-        <!-- admin_frontend.js writes rows here via renderTilaukset() -->
-        <tbody id="orders-tbody">
+          </thead>
+
+          <tbody id="orders-tbody">
           <tr>
             <td colspan="6" style="text-align:center;color:var(--text2);padding:2rem">
               Ladataan tilauksia…
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
     <!-- Menu management -->
-    <div class="section-divider">Ruokalistan hallinta</div>
+    <section class="admin-section" id="menu">
+      <h2 class="admin-section-title">Ruokalistan hallinta</h2>
 
-    <div style="margin-bottom:1rem">
-      <button class="btn btn-primary" onclick="document.getElementById('add-modal').classList.add('open')">
-        + Lisää tuote
-      </button>
-    </div>
+      <div style="margin-bottom:1rem">
+        <button class="btn btn-primary" id="add-product-btn">
+          + Lisää tuote
+        </button>
+      </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
+      <div class="table-wrap">
+        <table>
+          <thead>
           <tr>
             <th>Tuote</th>
             <th>Kategoria</th>
@@ -167,72 +179,75 @@
             <th>Erityisruokavaliot</th>
             <th>Toiminnot</th>
           </tr>
-        </thead>
-        <!-- Menu rows are static for now; could be populated dynamically similarly to orders -->
-        <tbody id="menu-tbody">
+          </thead>
+
+          <tbody id="menu-tbody">
           <tr>
-            <td>
-              <strong>Margherita Classica</strong><br>
-              <span style="font-size:0.8rem;color:var(--text2)">Tomaatti, mozzarella, basilika</span>
-            </td>
-            <td style="color:var(--text2)">Pizza</td>
-            <td>8,90 €</td>
-            <td><span class="diet-tag veg">Veg</span> <span class="diet-tag lac">Maitoa</span></td>
-            <td>
-              <button class="icon-btn">Muokkaa</button>
-              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+            <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
+              Ladataan ruokalistaa…
             </td>
           </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Users -->
+    <section class="admin-section users-section" id="users">
+      <h2 class="admin-section-title">Käyttäjien hallinta</h2>
+
+      <div class="table-wrap users-wrap">
+        <div class="table-header">
+          <h3>Rekisteröityneet käyttäjät</h3>
+          <button class="icon-btn" id="refresh-users-btn">Päivitä</button>
+        </div>
+
+        <table>
+          <thead>
           <tr>
-            <td>
-              <strong>Metro Special</strong><br>
-              <span style="font-size:0.8rem;color:var(--text2)">Kinkku, sieni, oliivi, paprika</span>
-            </td>
-            <td style="color:var(--text2)">Pizza</td>
-            <td>10,50 €</td>
-            <td><span class="diet-tag lac">Maitoa</span></td>
-            <td>
-              <button class="icon-btn">Muokkaa</button>
-              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
+            <th>ID</th>
+            <th>Nimi</th>
+            <th>Sähköposti</th>
+            <th>Opiskelijanumero</th>
+            <th>Rooli</th>
+          </tr>
+          </thead>
+
+          <tbody id="users-tbody">
+          <tr>
+            <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
+              Ladataan käyttäjiä…
             </td>
           </tr>
-          <tr>
-            <td>
-              <strong>Veggie Delight</strong><br>
-              <span style="font-size:0.8rem;color:var(--text2)">Kasvistopping, pesto, rucola</span>
-            </td>
-            <td style="color:var(--text2)">Pizza</td>
-            <td>9,90 €</td>
-            <td><span class="diet-tag veg">Veg</span> <span class="diet-tag glu">Glu-free</span></td>
-            <td>
-              <button class="icon-btn">Muokkaa</button>
-              <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem">Poista</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    </section>
 
   </main>
 </div>
 
-<!-- Add product modal -->
+<!-- Add / edit product modal -->
 <div class="modal-overlay" id="add-modal">
   <div class="modal">
-    <h3>Lisää uusi tuote</h3>
+    <h3 id="add-modal-title">Lisää uusi tuote</h3>
+
     <div class="form-group">
       <label>Tuotteen nimi</label>
       <input type="text" id="new-nimi" placeholder="esim. Prosciutto e Rucola" />
     </div>
+
     <div class="form-group">
       <label>Kuvaus</label>
       <textarea id="new-kuvaus" rows="2" style="resize:vertical" placeholder="Ainekset lyhyesti..."></textarea>
     </div>
+
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
       <div class="form-group">
         <label>Hinta (€)</label>
         <input type="number" id="new-hinta" step="0.10" placeholder="9.90" />
       </div>
+
       <div class="form-group">
         <label>Kategoria</label>
         <select id="new-kategoria">
@@ -240,10 +255,11 @@
           <option value="pizza">Pizza</option>
           <option value="salaatti">Salaatti</option>
           <option value="juoma">Juoma</option>
-          <option value="jalkiviisaus">Jälkiruoka</option>
+          <option value="jalkiruoka">Jälkiruoka</option>
         </select>
       </div>
     </div>
+
     <div class="form-group">
       <label>Viikonpäivä (lounaalle)</label>
       <select id="new-viikonpaiva">
@@ -255,21 +271,27 @@
         <option value="perjantai">Perjantai</option>
       </select>
     </div>
+
     <div class="form-group">
       <label>Erityisruokavaliot</label>
+
       <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:0.25rem">
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
           <input type="checkbox" id="diet-kasvis" value="kasvis" /> Kasvis
         </label>
+
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
           <input type="checkbox" id="diet-gluteeniton" value="gluteeniton" /> Gluteeniton vaihtoehto
         </label>
+
         <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text);font-size:0.88rem;cursor:pointer">
           <input type="checkbox" id="diet-maitoa" value="maitoa" /> Sisältää maitoa
         </label>
       </div>
     </div>
+
     <div id="add-modal-error" style="display:none;color:var(--accent);font-size:0.85rem;margin-top:0.5rem"></div>
+
     <div class="modal-actions">
       <button class="btn btn-outline" onclick="document.getElementById('add-modal').classList.remove('open')">
         Peruuta
@@ -277,33 +299,6 @@
       <button class="btn btn-primary" id="save-product-btn">Tallenna tuote</button>
     </div>
   </div>
-</div>
-<div class="section-divider" id="users">Käyttäjien hallinta</div>
-
-<div class="table-wrap">
-  <div class="table-header">
-    <h3>Rekisteröityneet käyttäjät</h3>
-    <button class="icon-btn" id="refresh-users-btn">Päivitä</button>
-  </div>
-
-  <table>
-    <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nimi</th>
-      <th>Sähköposti</th>
-      <th>Opiskelijanumero</th>
-      <th>Rooli</th>
-    </tr>
-    </thead>
-    <tbody id="users-tbody">
-    <tr>
-      <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
-        Ladataan käyttäjiä…
-      </td>
-    </tr>
-    </tbody>
-  </table>
 </div>
 <!-- Admin frontend — handles auth check, orders fetch/render, stat cards, logout, add product -->
 <script src="js/admin.js"></script>

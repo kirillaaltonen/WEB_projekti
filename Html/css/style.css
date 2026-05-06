@@ -642,8 +642,6 @@ section { padding: 6rem 2rem; }
 .admin-layout { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
 
 .sidebar {
-  background: var(--bg2);
-  border-right: 1px solid var(--border);
   padding: 6rem 1.5rem 2rem;
   display: flex;
   flex-direction: column;
@@ -661,7 +659,31 @@ section { padding: 6rem 2rem; }
   font-size: 0.9rem;
   transition: all 0.15s;
 }
+.admin-content {
+  display: block !important;
+  gap: 0 !important;
+}
 
+.admin-section {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+#dashboard {
+  min-height: auto !important;
+  height: auto !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 2rem !important;
+}
+
+#dashboard .stats-row {
+  margin-bottom: 0 !important;
+}
+
+#orders {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
 .sidebar a:hover, .sidebar a.active { background: rgba(232,71,42,0.1); color: var(--text); }
 .sidebar a.active { color: var(--accent); }
 
@@ -706,6 +728,66 @@ input[type=text], input[type=email], input[type=password], input[type=number], s
   transition: border-color 0.2s;
   outline: none;
 }
+.users-section {
+  margin-top: 4rem;
+  max-width: 100%;
+}
+
+.admin-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.users-wrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.users-wrap table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.users-wrap th,
+.users-wrap td {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.users-wrap th:nth-child(1),
+.users-wrap td:nth-child(1) {
+  width: 70px;
+}
+
+.users-wrap th:nth-child(2),
+.users-wrap td:nth-child(2) {
+  width: 18%;
+}
+
+.users-wrap th:nth-child(3),
+.users-wrap td:nth-child(3) {
+  width: 30%;
+}
+
+.users-wrap th:nth-child(4),
+.users-wrap td:nth-child(4) {
+  width: 18%;
+}
+
+.users-wrap th:nth-child(5),
+.users-wrap td:nth-child(5) {
+  width: 170px;
+}
+
+.users-wrap .role-select {
+  width: 140px;
+  max-width: 100%;
+}
 
 input:focus, select:focus, textarea:focus { border-color: rgba(232,71,42,0.5); }
 
@@ -727,4 +809,27 @@ footer a { color: var(--accent); text-decoration: none; }
   .admin-layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .admin-content { padding: 5rem 1.25rem 2rem; }
+}
+/* Admin-paneelin sectionit eivät saa käyttää sivuston yleistä section-paddingia */
+.admin-content > .admin-section {
+  padding: 0 !important;
+  margin: 0 0 3rem 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+.admin-content > .admin-section:last-child {
+  margin-bottom: 0 !important;
+}
+
+.admin-content .admin-section-title {
+  margin: 0 0 1.5rem 0 !important;
+}
+
+.admin-content .table-wrap {
+  margin-bottom: 0 !important;
+}
+
+#dashboard .stats-row {
+  margin-bottom: 0 !important;
 }

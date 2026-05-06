@@ -3,29 +3,22 @@
  * Hallintapaneeli – Metro Pizza
  *
  * Toiminnot:
- *  - Tarkistaa admin-kirjautumisen (JWT)
- *  - Hakee tilaukset GET /api/admin/orders
- *  - Renderöi tilaukset #orders-tbody -taulukkoon
- *  - Mahdollistaa tilauksen tilan päivityksen PUT /api/admin/orders/:id
- *  - Päivittää stat-kortit (tilaukset, odottavat, myynti)
+ *  - Tarkistaa admin-kirjautumisen JWT-tokenilla
+ *  - Hakee ja renderöi tilaukset
+ *  - Mahdollistaa tilauksen tilan päivityksen
+ *  - Hakee ja renderöi ruokalistan tuotteet
+ *  - Mahdollistaa tuotteen lisäämisen ja poistamisen
+ *  - Hakee ja renderöi käyttäjät
+ *  - Mahdollistaa käyttäjän roolin vaihtamisen
+ *  - Päivittää admin-paneelin tilastot
  */
 
 const API = "https://webprojekti-production.up.railway.app/api/admin";
-// ─── Auth-tarkistus ───────────────────────────────────────────────────────────
-async function haeStats() {
-  const token = getToken();
+const PUBLIC_API = "https://webprojekti-production.up.railway.app/api";
 
-  const res = await fetch(`${API}/stats`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  if (!res.ok) return;
-
-  const stats = await res.json();
-
-  const usersEl = document.getElementById("users-count");
-  if (usersEl) usersEl.textContent = stats.usersCount;
-}
+let tuotteetCache = [];
+let muokattavaTuoteId = null;
+// ─── Auth-apufunktiot ────────────────────────────────────────────────────────
 
 function getToken() {
   return localStorage.getItem("token");
@@ -42,17 +35,20 @@ function getKayttaja() {
 (function tarkistaAdmin() {
   const token = getToken();
   const kayttaja = getKayttaja();
+
   if (!token || !kayttaja || kayttaja.rooli !== "admin") {
     alert("Pääsy kielletty. Kirjaudu ylläpitäjänä.");
     window.location.href = "kirjaudu.html";
   }
 })();
 
-// ─── Apufunktiot ─────────────────────────────────────────────────────────────
+// ─── Yleiset apufunktiot ─────────────────────────────────────────────────────
 
 function formatPvm(isoStr) {
   if (!isoStr) return "–";
+
   const d = new Date(isoStr);
+
   return d.toLocaleString("fi-FI", {
     day: "2-digit",
     month: "2-digit",
@@ -62,11 +58,11 @@ function formatPvm(isoStr) {
 }
 
 function formatHinta(val) {
-  if (val === null || val === undefined) return "–";
-  return parseFloat(val).toFixed(2).replace(".", ",") + " €";
+  if (val === null || val === undefined || val === "") return "–";
+
+  return Number(val).toFixed(2).replace(".", ",") + " €";
 }
 
-/** Palauttaa tilalle CSS-luokan */
 function tilaClass(tila) {
   const map = {
     odottaa: "new",
@@ -75,10 +71,10 @@ function tilaClass(tila) {
     noudettu: "done",
     peruutettu: "done",
   };
+
   return map[tila] || "new";
 }
 
-/** Palauttaa tilalle suomenkielisen tekstin */
 function tilaTeksti(tila) {
   const map = {
     odottaa: "Uusi",
@@ -87,16 +83,57 @@ function tilaTeksti(tila) {
     noudettu: "Noudettu",
     peruutettu: "Peruutettu",
   };
+
   return map[tila] || tila;
 }
 
-// ─── Tilausten haku ───────────────────────────────────────────────────────────
+function naytaVirhe(teksti) {
+  const tbody = document.getElementById("orders-tbody");
+
+  if (tbody) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" style="text-align:center;color:var(--accent,#e8471a);padding:2rem">
+          ⚠️ ${teksti}
+        </td>
+      </tr>
+    `;
+  }
+}
+
+// ─── Tilastot ────────────────────────────────────────────────────────────────
+
+async function haeStats() {
+  const token = getToken();
+
+  try {
+    const res = await fetch(`${API}/stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) return;
+
+    const stats = await res.json();
+
+    const usersEl = document.getElementById("users-count");
+    if (usersEl) usersEl.textContent = stats.usersCount;
+  } catch (err) {
+    console.error("Tilastojen haku epäonnistui:", err);
+  }
+}
+
+// ─── Tilausten haku ──────────────────────────────────────────────────────────
 
 async function haeTilaukset() {
   const token = getToken();
+
   try {
     const res = await fetch(`${API}/orders`, {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     if (res.status === 401 || res.status === 403) {
@@ -105,7 +142,8 @@ async function haeTilaukset() {
       return [];
     }
 
-    if (!res.ok) throw new Error("Haku epäonnistui");
+    if (!res.ok) throw new Error("Tilausten haku epäonnistui");
+
     return await res.json();
   } catch (err) {
     console.error("Tilausten haku epäonnistui:", err);
@@ -114,10 +152,11 @@ async function haeTilaukset() {
   }
 }
 
-// ─── Tilauksen tilan päivitys ─────────────────────────────────────────────────
+// ─── Tilauksen tilan päivitys ────────────────────────────────────────────────
 
 async function paivitaTila(tilausId, uusiTila, riviEl) {
   const token = getToken();
+
   try {
     const res = await fetch(`${API}/orders/${tilausId}`, {
       method: "PUT",
@@ -130,10 +169,14 @@ async function paivitaTila(tilausId, uusiTila, riviEl) {
 
     if (!res.ok) throw new Error("Päivitys epäonnistui");
 
-    // Päivitä rivi UI:ssa
     const tilaCell = riviEl.querySelector(".order-tila-cell");
+
     if (tilaCell) {
-      tilaCell.innerHTML = `<span class="status ${tilaClass(uusiTila)}">${tilaTeksti(uusiTila)}</span>`;
+      tilaCell.innerHTML = `
+        <span class="status ${tilaClass(uusiTila)}">
+          ${tilaTeksti(uusiTila)}
+        </span>
+      `;
     }
   } catch (err) {
     console.error(err);
@@ -141,22 +184,24 @@ async function paivitaTila(tilausId, uusiTila, riviEl) {
   }
 }
 
-// ─── Renderöinti ──────────────────────────────────────────────────────────────
+// ─── Tilausten renderöinti ───────────────────────────────────────────────────
 
 function renderTilaukset(tilaukset) {
   const tbody = document.getElementById("orders-tbody");
+
   if (!tbody) {
     console.warn("orders-tbody ei löydy sivulta.");
     return;
   }
 
-  if (tilaukset.length === 0) {
+  if (!tilaukset.length) {
     tbody.innerHTML = `
       <tr>
         <td colspan="6" style="text-align:center;color:var(--text2);padding:2rem">
           Ei tilauksia
         </td>
-      </tr>`;
+      </tr>
+    `;
     return;
   }
 
@@ -166,7 +211,6 @@ function renderTilaukset(tilaukset) {
     const tr = document.createElement("tr");
     tr.dataset.tilausId = t.tilaus_id;
 
-    // Tilavalinnat dropdown
     const tilaVaihtoehdot = [
       "odottaa",
       "valmistetaan",
@@ -183,8 +227,12 @@ function renderTilaukset(tilaukset) {
     tr.innerHTML = `
       <td style="color:var(--text2)">#${t.tilaus_id}</td>
       <td>${t.asiakas || "–"}</td>
-      <td style="font-size:0.85rem;color:var(--text2)">${t.tuotteet || "–"}</td>
-      <td style="color:var(--text2)">${formatPvm(t.paivamaara)}</td>
+      <td style="font-size:0.85rem;color:var(--text2)">
+        ${t.tuotteet || "–"}
+      </td>
+      <td style="color:var(--text2)">
+        ${formatPvm(t.paivamaara)}
+      </td>
       <td>${formatHinta(t.kokonaishinta)}</td>
       <td class="order-tila-cell">
         <select class="tila-select" data-id="${t.tilaus_id}" style="
@@ -205,18 +253,18 @@ function renderTilaukset(tilaukset) {
     tbody.appendChild(tr);
   });
 
-  // Sido tila-muutokset
   tbody.querySelectorAll(".tila-select").forEach((select) => {
     select.addEventListener("change", (e) => {
-      const tilausId = parseInt(e.target.dataset.id);
+      const tilausId = Number(e.target.dataset.id);
       const uusiTila = e.target.value;
       const rivi = e.target.closest("tr");
+
       paivitaTila(tilausId, uusiTila, rivi);
     });
   });
 }
 
-// ─── Stat-korttien päivitys ────────────────────────────────────────────────────
+// ─── Stat-korttien päivitys ──────────────────────────────────────────────────
 
 function paivitaStats(tilaukset) {
   const tanaan = new Date().toDateString();
@@ -231,7 +279,7 @@ function paivitaStats(tilaukset) {
 
   const myyntiTanaan = tanaanTilaukset
     .filter((t) => t.tila !== "peruutettu")
-    .reduce((s, t) => s + parseFloat(t.kokonaishinta || 0), 0);
+    .reduce((summa, t) => summa + Number(t.kokonaishinta || 0), 0);
 
   const setVal = (id, val) => {
     const el = document.getElementById(id);
@@ -243,162 +291,294 @@ function paivitaStats(tilaukset) {
   setVal("sales-today", myyntiTanaan.toFixed(2).replace(".", ",") + " €");
 }
 
-// ─── Virheviesti ─────────────────────────────────────────────────────────────
+// ─── Ruokalistan haku ────────────────────────────────────────────────────────
 
-function naytaVirhe(teksti) {
-  const tbody = document.getElementById("orders-tbody");
-  if (tbody) {
+async function haeRuokalista() {
+  try {
+    const res = await fetch(`${PUBLIC_API}/menu`);
+
+    if (!res.ok) throw new Error("Ruokalistan haku epäonnistui");
+
+    const data = await res.json();
+
+    // /api/menu palauttaa yleensä taulukon.
+    // Tämä toimii myös, jos data joskus palautuisi objektina.
+    const tuotteet = Array.isArray(data) ? data : Object.values(data).flat();
+
+    tuotteetCache = tuotteet;
+    renderRuokalista(tuotteet);
+  } catch (err) {
+    console.error("Ruokalistan haku epäonnistui:", err);
+  }
+}
+
+// ─── Ruokalistan renderöinti ─────────────────────────────────────────────────
+
+function renderRuokalista(tuotteet) {
+  const tbody = document.getElementById("menu-tbody");
+
+  if (!tbody) return;
+
+  if (!tuotteet.length) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align:center;color:var(--accent,#e8471a);padding:2rem">
-          ⚠️ ${teksti}
+        <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
+          Ei tuotteita
         </td>
-      </tr>`;
+      </tr>
+    `;
+    return;
   }
-}
 
-// ─── Kirjaudu ulos ────────────────────────────────────────────────────────────
+  tbody.innerHTML = "";
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Kirjaudu ulos -nappi
-  const logoutBtn = document.querySelector(".btn-outline");
-  if (logoutBtn && logoutBtn.textContent.includes("Kirjaudu ulos")) {
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("kayttaja");
-      window.location.href = "kirjaudu.html";
+  tuotteet.forEach((t) => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>
+        <strong>${t.nimi}</strong><br>
+        <span style="font-size:0.8rem;color:var(--text2)">
+          ${t.kuvaus || "Ei kuvausta"}
+        </span>
+      </td>
+
+      <td style="color:var(--text2)">
+        ${t.kategoria || "–"}
+      </td>
+
+      <td>
+        ${formatHinta(t.hinta)}
+      </td>
+
+      <td>
+        ${t.erityisruokavaliot || "–"}
+      </td>
+
+      <td>
+        <button class="icon-btn edit-product-btn" data-id="${t.tuote_id}">
+          Muokkaa
+        </button>
+
+        <button
+          class="icon-btn delete-product-btn"
+          data-id="${t.tuote_id}"
+          style="color:var(--accent);margin-left:0.4rem"
+        >
+          Poista
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll(".delete-product-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      poistaTuote(btn.dataset.id);
     });
-  }
+  });
 
-  // Näytä kirjautuneen käyttäjän nimi
-  const kayttaja = getKayttaja();
-  const adminNimiEl = document.querySelector("[data-admin-name], .admin-email");
-  if (adminNimiEl && kayttaja) adminNimiEl.textContent = kayttaja.nimi;
-});
-
-// ─── Pääkäynnistys ────────────────────────────────────────────────────────────
-
-async function alusta() {
-  const tilaukset = await haeTilaukset();
-  renderTilaukset(tilaukset);
-  paivitaStats(tilaukset);
-  await haeStats();
-  await haeKayttajat();
-
-  setInterval(async () => {
-    const paivitetyt = await haeTilaukset();
-    renderTilaukset(paivitetyt);
-    paivitaStats(paivitetyt);
-    await haeStats();
-    await haeKayttajat();
-  }, 30_000);
+  tbody.querySelectorAll(".edit-product-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      avaaMuokkaaTuoteModal(btn.dataset.id);
+    });
+  });
 }
-document
-  .getElementById("refresh-users-btn")
-  ?.addEventListener("click", haeKayttajat);
-
-document.addEventListener("DOMContentLoaded", alusta);
 
 // ─── Uuden tuotteen lisääminen ───────────────────────────────────────────────
-
-async function lisaaTuote() {
-  const nimi = document.getElementById("new-nimi").value;
-  const kuvaus = document.getElementById("new-kuvaus").value;
-  const hinta = document.getElementById("new-hinta").value;
-  const kategoria = document.getElementById("new-kategoria").value;
-  const viikonpaiva = document.getElementById("new-viikonpaiva").value;
-
-  // Kerätään valitut erityisruokavaliot taulukkoon
-  const dietit = [];
-  if (document.getElementById("diet-kasvis").checked) dietit.push("kasvis");
-  if (document.getElementById("diet-gluteeniton").checked)
-    dietit.push("gluteeniton");
-  if (document.getElementById("diet-maitoa").checked) dietit.push("maitoa");
-
-  const token = getToken();
+async function tallennaTuote() {
+  const nimi = document.getElementById("new-nimi")?.value?.trim();
+  const kuvaus = document.getElementById("new-kuvaus")?.value?.trim();
+  const hinta = document.getElementById("new-hinta")?.value;
+  const kategoria = document.getElementById("new-kategoria")?.value;
+  const viikonpaiva = document.getElementById("new-viikonpaiva")?.value;
   const errorEl = document.getElementById("add-modal-error");
 
+  const dietit = [];
+
+  if (document.getElementById("diet-kasvis")?.checked) {
+    dietit.push("kasvis");
+  }
+
+  if (document.getElementById("diet-gluteeniton")?.checked) {
+    dietit.push("gluteeniton");
+  }
+
+  if (document.getElementById("diet-maitoa")?.checked) {
+    dietit.push("maitoa");
+  }
+
+  if (!nimi || !hinta || !kategoria) {
+    if (errorEl) {
+      errorEl.textContent = "Nimi, hinta ja kategoria ovat pakollisia.";
+      errorEl.style.display = "block";
+    }
+    return;
+  }
+
+  const token = getToken();
+
+  const payload = {
+    nimi,
+    kuvaus,
+    hinta: Number(hinta),
+    kategoria,
+    viikonpaiva,
+    erityisruokavaliot: dietit.join(","),
+  };
+
+  const url = muokattavaTuoteId
+    ? `${API}/menu/${muokattavaTuoteId}`
+    : `${API}/menu`;
+
+  const method = muokattavaTuoteId ? "PUT" : "POST";
+
   try {
-    const res = await fetch(`${API}/menu`, {
-      // POST http://localhost:3001/api/admin/menu
-      method: "POST",
+    const res = await fetch(url, {
+      method,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        nimi,
-        kuvaus, // HUOM: Tietokannassa on kuvaus-sarake
-        hinta: parseFloat(hinta),
-        kategoria,
-        viikonpaiva, // Backend odottaa tätä dokumentaation mukaan
-        erityisruokavaliot: dietit.join(", "), // Lähetetään merkkijonona
-      }),
+      body: JSON.stringify(payload),
     });
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Tuotteen lisäys epäonnistui");
-    }
-
-    alert("Tuote lisätty onnistuneesti!");
-    document.getElementById("add-modal").classList.remove("open");
-    await haeRuokalista();
-  } catch (err) {
-    console.error("Virhe tuotetta lisättäessä:", err);
-    errorEl.textContent = err.message;
-    errorEl.style.display = "block";
-  }
-}
-
-// Sido funktio tallennusnappiin, kun DOM on ladattu
-document.addEventListener("DOMContentLoaded", () => {
-  const saveBtn = document.getElementById("save-product-btn");
-  if (saveBtn) {
-    saveBtn.addEventListener("click", lisaaTuote);
-  }
-});
-
-// ─── Ruokalistan haku ja renderöinti ──────────────────────────────────────────
-
-async function haeRuokalista() {
-  try {
-    const res = await fetch("http://localhost:3001/api/menu"); // Hae koko ruokalista[cite: 5]
-    if (!res.ok) throw new Error("Ruokalistan haku epäonnistui");
     const data = await res.json();
 
-    // API palauttaa datan kategorioittain, yhdistetään ne yhdeksi listaksi[cite: 5]
-    const tuotteet = Object.values(data).flat();
-    renderRuokalista(tuotteet);
+    if (!res.ok) {
+      throw new Error(
+        data.error || data.message || "Tuotteen tallennus epäonnistui",
+      );
+    }
+
+    alert(
+      muokattavaTuoteId
+        ? "Tuote päivitetty onnistuneesti!"
+        : "Tuote lisätty onnistuneesti!",
+    );
+
+    suljeTuoteModal();
+    await haeRuokalista();
   } catch (err) {
-    console.error(err);
+    console.error("Virhe tuotetta tallennettaessa:", err);
+
+    if (errorEl) {
+      errorEl.textContent = err.message;
+      errorEl.style.display = "block";
+    }
+  }
+}
+function tyhjennaTuoteLomake() {
+  document.getElementById("new-nimi").value = "";
+  document.getElementById("new-kuvaus").value = "";
+  document.getElementById("new-hinta").value = "";
+  document.getElementById("new-kategoria").value = "lounas";
+  document.getElementById("new-viikonpaiva").value = "";
+
+  document.getElementById("diet-kasvis").checked = false;
+  document.getElementById("diet-gluteeniton").checked = false;
+  document.getElementById("diet-maitoa").checked = false;
+
+  const errorEl = document.getElementById("add-modal-error");
+  if (errorEl) {
+    errorEl.textContent = "";
+    errorEl.style.display = "none";
   }
 }
 
-function renderRuokalista(tuotteet) {
-  const tbody = document.getElementById("menu-tbody");
-  if (!tbody) return;
+function avaaUusiTuoteModal() {
+  muokattavaTuoteId = null;
+  tyhjennaTuoteLomake();
 
-  tbody.innerHTML = ""; // Tyhjennetään staattiset esimerkkirivit
+  const title = document.getElementById("add-modal-title");
+  if (title) title.textContent = "Lisää uusi tuote";
 
-  tuotteet.forEach((t) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>
-        <strong>${t.nimi}</strong><br>
-        <span style="font-size:0.8rem;color:var(--text2)">${t.kuvaus || "Ei kuvausta"}</span>
-      </td>
-      <td style="color:var(--text2)">${t.kategoria}</td>
-      <td>${formatHinta(t.hinta)}</td>
-      <td>${t.erityisruokavaliot || "–"}</td>
-      <td>
-        <button class="icon-btn">Muokkaa</button>
-        <button class="icon-btn" style="color:var(--accent);margin-left:0.4rem" onclick="poistaTuote(${t.tuote_id})">Poista</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
+  const saveBtn = document.getElementById("save-product-btn");
+  if (saveBtn) saveBtn.textContent = "Tallenna tuote";
+
+  document.getElementById("add-modal")?.classList.add("open");
 }
+
+function avaaMuokkaaTuoteModal(tuoteId) {
+  const tuote = tuotteetCache.find(
+    (t) => String(t.tuote_id) === String(tuoteId),
+  );
+
+  if (!tuote) {
+    alert("Tuotetta ei löydy.");
+    return;
+  }
+
+  muokattavaTuoteId = tuote.tuote_id;
+
+  document.getElementById("new-nimi").value = tuote.nimi || "";
+  document.getElementById("new-kuvaus").value = tuote.kuvaus || "";
+  document.getElementById("new-hinta").value = tuote.hinta || "";
+  document.getElementById("new-kategoria").value = tuote.kategoria || "lounas";
+  document.getElementById("new-viikonpaiva").value = tuote.viikonpaiva || "";
+
+  const dietit = String(tuote.erityisruokavaliot || "")
+    .toLowerCase()
+    .split(",")
+    .map((d) => d.trim());
+
+  document.getElementById("diet-kasvis").checked = dietit.includes("kasvis");
+  document.getElementById("diet-gluteeniton").checked =
+    dietit.includes("gluteeniton");
+  document.getElementById("diet-maitoa").checked = dietit.includes("maitoa");
+
+  const errorEl = document.getElementById("add-modal-error");
+  if (errorEl) {
+    errorEl.textContent = "";
+    errorEl.style.display = "none";
+  }
+
+  const title = document.getElementById("add-modal-title");
+  if (title) title.textContent = "Muokkaa tuotetta";
+
+  const saveBtn = document.getElementById("save-product-btn");
+  if (saveBtn) saveBtn.textContent = "Päivitä tuote";
+
+  document.getElementById("add-modal")?.classList.add("open");
+}
+
+function suljeTuoteModal() {
+  document.getElementById("add-modal")?.classList.remove("open");
+  muokattavaTuoteId = null;
+}
+// ─── Tuotteen poisto ─────────────────────────────────────────────────────────
+
+async function poistaTuote(tuoteId) {
+  const token = getToken();
+
+  const ok = confirm("Haluatko varmasti poistaa tämän tuotteen?");
+  if (!ok) return;
+
+  try {
+    const res = await fetch(`${API}/menu/${tuoteId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Tuotteen poisto epäonnistui.");
+      return;
+    }
+
+    await haeRuokalista();
+  } catch (err) {
+    console.error("Tuotteen poisto epäonnistui:", err);
+    alert("Palvelimeen ei saatu yhteyttä.");
+  }
+}
+
+// ─── Käyttäjien haku ─────────────────────────────────────────────────────────
+
 async function haeKayttajat() {
   const token = getToken();
 
@@ -414,11 +594,13 @@ async function haeKayttajat() {
     }
 
     const kayttajat = await res.json();
+
     renderKayttajat(kayttajat);
   } catch (err) {
-    console.error(err);
+    console.error("Käyttäjien haku epäonnistui:", err);
 
     const tbody = document.getElementById("users-tbody");
+
     if (tbody) {
       tbody.innerHTML = `
         <tr>
@@ -431,8 +613,11 @@ async function haeKayttajat() {
   }
 }
 
+// ─── Käyttäjien renderöinti ──────────────────────────────────────────────────
+
 function renderKayttajat(kayttajat) {
   const tbody = document.getElementById("users-tbody");
+
   if (!tbody) return;
 
   if (!kayttajat.length) {
@@ -456,8 +641,12 @@ function renderKayttajat(kayttajat) {
           <td style="color:var(--text2)">${k.opiskelijanumero || "–"}</td>
           <td>
             <select class="role-select" data-id="${k.kayttaja_id}">
-              <option value="opiskelija" ${k.rooli === "opiskelija" ? "selected" : ""}>Opiskelija</option>
-              <option value="admin" ${k.rooli === "admin" ? "selected" : ""}>Admin</option>
+              <option value="opiskelija" ${k.rooli === "opiskelija" ? "selected" : ""}>
+                Opiskelija
+              </option>
+              <option value="admin" ${k.rooli === "admin" ? "selected" : ""}>
+                Admin
+              </option>
             </select>
           </td>
         </tr>
@@ -474,6 +663,8 @@ function renderKayttajat(kayttajat) {
     });
   });
 }
+
+// ─── Käyttäjän roolin päivitys ───────────────────────────────────────────────
 
 async function paivitaKayttajanRooli(id, rooli) {
   const token = getToken();
@@ -492,8 +683,71 @@ async function paivitaKayttajanRooli(id, rooli) {
       throw new Error("Roolin päivitys epäonnistui");
     }
   } catch (err) {
-    console.error(err);
+    console.error("Käyttäjän roolin päivitys epäonnistui:", err);
     alert("Käyttäjän roolin päivitys epäonnistui.");
-    haeKayttajat();
+
+    await haeKayttajat();
   }
 }
+
+// ─── Pääkäynnistys ───────────────────────────────────────────────────────────
+
+async function alusta() {
+  const tilaukset = await haeTilaukset();
+
+  renderTilaukset(tilaukset);
+  paivitaStats(tilaukset);
+
+  await haeStats();
+  await haeKayttajat();
+  await haeRuokalista();
+
+  setInterval(async () => {
+    const paivitetyt = await haeTilaukset();
+
+    renderTilaukset(paivitetyt);
+    paivitaStats(paivitetyt);
+
+    await haeStats();
+    await haeKayttajat();
+  }, 30_000);
+}
+
+// ─── DOM-kuuntelijat ─────────────────────────────────────────────────────────
+
+document.addEventListener("DOMContentLoaded", () => {
+  const logoutBtn = document.querySelector(".btn-outline");
+
+  if (logoutBtn && logoutBtn.textContent.includes("Kirjaudu ulos")) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("kayttaja");
+
+      window.location.href = "kirjaudu.html";
+    });
+  }
+
+  const kayttaja = getKayttaja();
+  const adminNimiEl = document.querySelector("[data-admin-name], .admin-email");
+
+  if (adminNimiEl && kayttaja) {
+    adminNimiEl.textContent = kayttaja.nimi;
+  }
+
+  const saveBtn = document.getElementById("save-product-btn");
+  if (saveBtn) {
+    saveBtn.addEventListener("click", tallennaTuote);
+  }
+  const addProductBtn = document.getElementById("add-product-btn");
+
+  if (addProductBtn) {
+    addProductBtn.addEventListener("click", avaaUusiTuoteModal);
+  }
+  const refreshUsersBtn = document.getElementById("refresh-users-btn");
+
+  if (refreshUsersBtn) {
+    refreshUsersBtn.addEventListener("click", haeKayttajat);
+  }
+
+  alusta();
+});
