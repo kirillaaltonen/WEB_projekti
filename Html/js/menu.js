@@ -18,7 +18,8 @@ const PAIVAT = [
   { avain: "torstai", nimi: "Torstai" },
   { avain: "perjantai", nimi: "Perjantai" },
 ];
-
+let nykyinenLounaslista = {};
+let aktiivinenSuodatin = "kaikki";
 // Kartoitetaan suomenkieliset viikonpäivät JS:n getDay()-indekseihin
 const TANAAN_INDEKSI = new Date().getDay(); // 0=su, 1=ma, 2=ti, ...
 const PAIVA_INDEKSIT = {
@@ -54,7 +55,21 @@ function renderDietTagit(erityisruokavaliot) {
     })
     .join("");
 }
+function tuoteSopiiSuodattimeen(tuote) {
+  if (aktiivinenSuodatin === "kaikki") return true;
 
+  const ruokavaliot = String(tuote.erityisruokavaliot || "")
+    .toLowerCase()
+    .split(",")
+    .map((r) => r.trim())
+    .filter(Boolean);
+
+  if (aktiivinenSuodatin === "laktoositon") {
+    return !ruokavaliot.includes("maitoa");
+  }
+
+  return ruokavaliot.includes(aktiivinenSuodatin);
+}
 /**
  * Muotoilee hinnan suomalaiseen tapaan: "10,90 €"
  * @param {number|string} hinta
@@ -168,6 +183,28 @@ function naytaVirhe(kontti, viesti) {
 /**
  * Pääfunktio: hakee lounaslistan ja renderöi sen.
  */
+function renderoiMenu() {
+  const kontti = document.getElementById("dynamic-menu");
+  if (!kontti) return;
+
+  kontti.innerHTML = "";
+
+  PAIVAT.forEach((paivaInfo) => {
+    const tuotteet = (nykyinenLounaslista[paivaInfo.avain] || []).filter(
+      tuoteSopiiSuodattimeen,
+    );
+
+    const onTanaan = PAIVA_INDEKSIT[paivaInfo.avain] === TANAAN_INDEKSI;
+    const blokki = renderPaivaBlokki(paivaInfo, tuotteet, onTanaan);
+    kontti.appendChild(blokki);
+  });
+
+  document.dispatchEvent(new Event("menuRendered"));
+}
+
+/**
+ * Pääfunktio: hakee lounaslistan ja renderöi sen.
+ */
 async function lataaJaRenderoi() {
   const kontti = document.getElementById("dynamic-menu");
   if (!kontti) {
@@ -175,43 +212,47 @@ async function lataaJaRenderoi() {
     return;
   }
 
-  // Latausindikaattori
   kontti.innerHTML = `
     <p style="color:var(--text2);text-align:center;padding:2rem 0">
       Ladataan ruokalistaa…
     </p>
   `;
 
-  let lounaslista;
-
   try {
     const res = await fetch(`${API_BASE}/menu/lounas`);
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
-    lounaslista = await res.json();
+
+    nykyinenLounaslista = await res.json();
+    renderoiMenu();
   } catch (err) {
     console.error("menu.js: Lounaslistan haku epäonnistui:", err);
     naytaVirhe(kontti, "Ruokalistan lataaminen epäonnistui.");
-    return;
   }
+}
 
-  // Tyhjennä latausindikaattori
-  kontti.innerHTML = "";
+function alustaSuodatus() {
+  document.querySelectorAll(".filter-row .tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filter-row .tab")
+        .forEach((b) => b.classList.remove("active"));
 
-  // Renderöi viikonpäivät järjestyksessä
-  PAIVAT.forEach((paivaInfo) => {
-    const tuotteet = lounaslista[paivaInfo.avain] || [];
-    const onTanaan = PAIVA_INDEKSIT[paivaInfo.avain] === TANAAN_INDEKSI;
-    const blokki = renderPaivaBlokki(paivaInfo, tuotteet, onTanaan);
-    kontti.appendChild(blokki);
+      btn.classList.add("active");
+      aktiivinenSuodatin = btn.dataset.filter || "kaikki";
+
+      renderoiMenu();
+    });
   });
 }
-document.dispatchEvent(new Event("menuRendered"));
-// Käynnistä heti kun DOM on valmis
-// (Jos cart.js ladataan tämän jälkeen, se löytää dynaamiset .add-btn:t)
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", lataaJaRenderoi);
+  document.addEventListener("DOMContentLoaded", () => {
+    alustaSuodatus();
+    lataaJaRenderoi();
+  });
 } else {
+  alustaSuodatus();
   lataaJaRenderoi();
 }
