@@ -122,12 +122,26 @@ router.post("/", verifyToken, async (req, res) => {
 // GET /api/orders/my-orders — Kirjautuneen käyttäjän tilaukset
 router.get("/my-orders", verifyToken, async (req, res) => {
   const kayttaja_id = req.kayttaja.kayttaja_id;
+
   try {
-    const [tilaukset] = await db.query(
-      "SELECT tilaus_id, tila, paivamaara FROM TILAUKSET WHERE kayttaja_id = ? ORDER BY paivamaara DESC",
+    const [rows] = await db.query(
+      `
+      SELECT
+        T.tilaus_id,
+        T.tila,
+        T.paivamaara,
+        COALESCE(SUM(TR.maara * P.hinta), 0) AS kokonaishinta
+      FROM TILAUKSET T
+      LEFT JOIN TILAUSRIVIT TR ON T.tilaus_id = TR.tilaus_id
+      LEFT JOIN TUOTTEET P ON TR.tuote_id = P.tuote_id
+      WHERE T.kayttaja_id = ?
+      GROUP BY T.tilaus_id, T.tila, T.paivamaara
+      ORDER BY T.paivamaara DESC
+      `,
       [kayttaja_id],
     );
-    res.json(tilaukset);
+
+    res.json(rows);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Tilausten haku epäonnistui" });
