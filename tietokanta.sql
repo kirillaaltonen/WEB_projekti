@@ -11,7 +11,7 @@ CREATE TABLE KAYTTAJAT (
                          sahkoposti VARCHAR(255) NOT NULL UNIQUE,
                          salasana TEXT NOT NULL,
                          opiskelijanumero VARCHAR(50) UNIQUE,
-                         rooli ENUM('opiskelija', 'henkilokunta', 'admin') NOT NULL DEFAULT 'opiskelija'
+                         rooli ENUM('opiskelija', 'admin') NOT NULL DEFAULT 'opiskelija'
 );
 
 CREATE TABLE TUOTTEET (

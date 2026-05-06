@@ -94,8 +94,6 @@
     <a href="#">📦 Tilaukset</a>
     <a href="#">🍕 Ruokalista</a>
     <a href="#">👥 Käyttäjät</a>
-    <a href="#">📢 Tiedotteet</a>
-    <a href="#">⚙️ Asetukset</a>
   </aside>
 
   <!-- Main content -->
@@ -280,7 +278,33 @@
     </div>
   </div>
 </div>
+<div class="section-divider" id="users">Käyttäjien hallinta</div>
 
+<div class="table-wrap">
+  <div class="table-header">
+    <h3>Rekisteröityneet käyttäjät</h3>
+    <button class="icon-btn" id="refresh-users-btn">Päivitä</button>
+  </div>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nimi</th>
+      <th>Sähköposti</th>
+      <th>Opiskelijanumero</th>
+      <th>Rooli</th>
+    </tr>
+    </thead>
+    <tbody id="users-tbody">
+    <tr>
+      <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
+        Ladataan käyttäjiä…
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
 <!-- Admin frontend — handles auth check, orders fetch/render, stat cards, logout, add product -->
 <script src="js/admin.js"></script>
 

@@ -283,15 +283,19 @@ async function alusta() {
   renderTilaukset(tilaukset);
   paivitaStats(tilaukset);
   await haeStats();
-  await haeRuokalista();
+  await haeKayttajat();
 
   setInterval(async () => {
     const paivitetyt = await haeTilaukset();
     renderTilaukset(paivitetyt);
     paivitaStats(paivitetyt);
     await haeStats();
+    await haeKayttajat();
   }, 30_000);
 }
+document
+  .getElementById("refresh-users-btn")
+  ?.addEventListener("click", haeKayttajat);
 
 document.addEventListener("DOMContentLoaded", alusta);
 
@@ -394,4 +398,102 @@ function renderRuokalista(tuotteet) {
     `;
     tbody.appendChild(tr);
   });
+}
+async function haeKayttajat() {
+  const token = getToken();
+
+  try {
+    const res = await fetch(`${API}/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      throw new Error("Käyttäjien haku epäonnistui");
+    }
+
+    const kayttajat = await res.json();
+    renderKayttajat(kayttajat);
+  } catch (err) {
+    console.error(err);
+
+    const tbody = document.getElementById("users-tbody");
+    if (tbody) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center;color:var(--accent);padding:2rem">
+            Käyttäjien haku epäonnistui
+          </td>
+        </tr>
+      `;
+    }
+  }
+}
+
+function renderKayttajat(kayttajat) {
+  const tbody = document.getElementById("users-tbody");
+  if (!tbody) return;
+
+  if (!kayttajat.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align:center;color:var(--text2);padding:2rem">
+          Ei käyttäjiä
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = kayttajat
+    .map(
+      (k) => `
+        <tr>
+          <td style="color:var(--text2)">#${k.kayttaja_id}</td>
+          <td>${k.nimi || "–"}</td>
+          <td style="color:var(--text2)">${k.sahkoposti}</td>
+          <td style="color:var(--text2)">${k.opiskelijanumero || "–"}</td>
+          <td>
+            <select class="role-select" data-id="${k.kayttaja_id}">
+              <option value="opiskelija" ${k.rooli === "opiskelija" ? "selected" : ""}>Opiskelija</option>
+              <option value="admin" ${k.rooli === "admin" ? "selected" : ""}>Admin</option>
+            </select>
+          </td>
+        </tr>
+      `,
+    )
+    .join("");
+
+  tbody.querySelectorAll(".role-select").forEach((select) => {
+    select.addEventListener("change", async (e) => {
+      const id = e.target.dataset.id;
+      const rooli = e.target.value;
+
+      await paivitaKayttajanRooli(id, rooli);
+    });
+  });
+}
+
+async function paivitaKayttajanRooli(id, rooli) {
+  const token = getToken();
+
+  try {
+    const res = await fetch(`${API}/users/${id}/role`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ rooli }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Roolin päivitys epäonnistui");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Käyttäjän roolin päivitys epäonnistui.");
+    haeKayttajat();
+  }
 }

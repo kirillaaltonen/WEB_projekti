@@ -152,7 +152,49 @@ router.post("/menu", verifyAdmin, async (req, res) => {
     res.status(500).json({ error: "Tuotteen lisäys epäonnistui" });
   }
 });
+// GET /api/admin/users - Hae kaikki käyttäjät
+router.get("/users", verifyAdmin, async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT kayttaja_id, nimi, sahkoposti, opiskelijanumero, rooli
+      FROM KAYTTAJAT
+      ORDER BY kayttaja_id DESC
+    `);
 
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Käyttäjien haku epäonnistui" });
+  }
+});
+
+// PUT /api/admin/users/:id/role - Päivitä käyttäjän rooli
+router.put("/users/:id/role", verifyAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { rooli } = req.body;
+
+  const sallitutRoolit = ["opiskelija", "admin"];
+
+  if (!sallitutRoolit.includes(rooli)) {
+    return res.status(400).json({ error: "Virheellinen rooli" });
+  }
+
+  try {
+    const [result] = await db.query(
+      "UPDATE KAYTTAJAT SET rooli = ? WHERE kayttaja_id = ?",
+      [rooli, id],
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Käyttäjää ei löydy" });
+    }
+
+    res.json({ message: "Rooli päivitetty", rooli });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Roolin päivitys epäonnistui" });
+  }
+});
 // PUT /api/admin/menu/:id - Muokkaa tuotetta
 router.put("/menu/:id", verifyAdmin, async (req, res) => {
   const { id } = req.params;
