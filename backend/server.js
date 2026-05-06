@@ -25,7 +25,7 @@ app.use("/api/orders", ordersRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/menu", menuRoutes);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.post("/api/route", async (req, res) => {
   try {
