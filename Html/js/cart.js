@@ -9,7 +9,7 @@
  *  - Kirjautumisen tarkistus (JWT localStorage:ssa)
  */
 
-const API = "http://localhost:3001/api";
+const API = "https://webprojekti-production.up.railway.app/api";
 
 // ─── Tila ────────────────────────────────────────────────────────────────────
 

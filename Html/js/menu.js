@@ -8,7 +8,7 @@
  * joten cart.js toimii muuttumattomana.
  */
 
-const API_BASE = "http://localhost:3001/api";
+const API_BASE = "https://webprojekti-production.up.railway.app/api";
 
 // Viikonpäivien järjestys ja suomenkieliset nimet
 const PAIVAT = [

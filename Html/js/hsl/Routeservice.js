@@ -42,11 +42,14 @@ async function fetchRoute(from, to) {
     }
   }`;
 
-  const res = await fetch("http://localhost:3001/api/route", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query }),
-  });
+  const res = await fetch(
+    "https://webprojekti-production.up.railway.app/api/route",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    },
+  );
 
   const data = await res.json();
   if (!res.ok) throw new Error(data?.message || `Palvelinvirhe: ${res.status}`);

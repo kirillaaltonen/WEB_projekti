@@ -1,4 +1,5 @@
-const MY_ORDERS_API = "http://localhost:3001/api/orders";
+const MY_ORDERS_API =
+  "https://webprojekti-production.up.railway.app/api/orders";
 
 function formatPrice(value) {
   return (

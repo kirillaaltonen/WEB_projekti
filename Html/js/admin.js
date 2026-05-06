@@ -10,7 +10,7 @@
  *  - Päivittää stat-kortit (tilaukset, odottavat, myynti)
  */
 
-const API = "http://localhost:3001/api/admin";
+const API = "https://webprojekti-production.up.railway.app/api/admin";
 // ─── Auth-tarkistus ───────────────────────────────────────────────────────────
 async function haeStats() {
   const token = getToken();

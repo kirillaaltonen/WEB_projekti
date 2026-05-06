@@ -4,7 +4,7 @@
  * Communicates with Express backend: POST /api/auth/login and /api/auth/register
  */
 
-const API = "http://localhost:3001/api/auth"; // ─── Tab switching ────────────────────────────────────────────────────────────
+const API = "https://webprojekti-production.up.railway.app/api/auth"; // ─── Tab switching ────────────────────────────────────────────────────────────
 
 const tabLogin = document.getElementById("tab-login");
 const tabRegister = document.getElementById("tab-register");
