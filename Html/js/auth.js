@@ -1,6 +1,6 @@
 /**
  * auth.js
- * Handles login and registration forms on Kirjaudu.html.
+ * Handles login and registration forms on kirjaudu.html.
  * Communicates with Express backend: POST /api/auth/login and /api/auth/register
  */
 

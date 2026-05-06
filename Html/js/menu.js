@@ -4,7 +4,7 @@
  *
  * Hakee lounaslistan backendistä GET /api/menu/lounas
  * ja renderöi sen #dynamic-menu -konttiin.
- * Käyttää samoja CSS-luokkia kuin alkuperäinen Ruokalista.html,
+ * Käyttää samoja CSS-luokkia kuin alkuperäinen ruokalista.html,
  * joten cart.js toimii muuttumattomana.
  */
 
