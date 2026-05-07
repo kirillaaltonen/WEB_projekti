@@ -10,9 +10,8 @@ Backend API: https://webprojekti-production.up.railway.app/api
 
 ## Ryhmän jäsenet
 
-- Nimi 1
-- Nimi 2
-- Nimi 3
+- Kirill
+- Aamos
 
 ## Sovelluksen idea ja kohderyhmä
 
