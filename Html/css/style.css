@@ -833,3 +833,128 @@ footer a { color: var(--accent); text-decoration: none; }
 #dashboard .stats-row {
   margin-bottom: 0 !important;
 }
+/* ─── Mobile navbar fix ───────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  nav {
+    padding: 1rem 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    align-items: center;
+  }
+
+  nav .logo {
+    font-size: 1.65rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  nav ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.55rem;
+    margin-top: 0.25rem;
+  }
+
+  nav ul li {
+    display: flex;
+  }
+
+  nav ul li a,
+  nav ul li button {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  nav .btn,
+  nav .btn-primary,
+  nav .btn-outline {
+    padding: 0.55rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+  }
+
+  .hero {
+    padding-top: 4rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 15vw, 5rem);
+    line-height: 0.9;
+  }
+
+  .hero p {
+    font-size: 1rem;
+    max-width: 90%;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 280px;
+    margin-inline: auto;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  nav {
+    padding: 0.9rem 1rem;
+  }
+
+  nav .logo {
+    font-size: 1.45rem;
+  }
+
+  nav ul {
+    gap: 0.45rem;
+  }
+
+  nav ul li a {
+    font-size: 0.82rem;
+  }
+
+  nav .btn,
+  nav .btn-primary,
+  nav .btn-outline {
+    font-size: 0.78rem;
+    padding: 0.5rem 0.7rem;
+  }
+
+  .page-header {
+    padding-top: 3rem;
+  }
+
+  .section-title {
+    font-size: clamp(2.4rem, 13vw, 4rem);
+  }
+
+  .filter-row {
+    align-items: flex-start;
+  }
+
+  .filter-row .tab {
+    padding: 0.55rem 0.9rem;
+  }
+
+  .order-bar {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .cart-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
