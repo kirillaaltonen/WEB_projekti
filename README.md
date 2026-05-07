@@ -210,6 +210,17 @@ HSL:
 ```txt
 POST /api/route
 ```
+## Käyttäjätestaus ja palaute
+
+Sovellusta testataan käyttäjäpalautteen avulla. Testaajat käyvät läpi sovelluksen keskeiset toiminnot, kuten ruokalistan selaamisen, kirjautumisen, tilaamisen, omien tilausten tarkistamisen sekä ylläpidon perustoiminnot.
+
+Palaute kerätään Google Forms -lomakkeella. Lomakkeessa arvioidaan muun muassa README:n selkeyttä, sovelluksen käyttötarkoituksen ymmärrettävyyttä ja sitä, löytyvätkö käyttöliittymästä helposti tarvittavat toiminnot.
+
+Palautelomake:  
+https://forms.gle/c1RVaDYN9S2LqJvG9
+
+Palautteen tulokset:  
+https://docs.google.com/spreadsheets/d/1LRJ138Qkev5yk1zcWE9F4rpUkCFOphbexLGQfojTbzc/edit?usp=sharing
 
 ## Tietokanta
 
