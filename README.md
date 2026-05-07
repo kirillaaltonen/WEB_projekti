@@ -11,7 +11,7 @@ Backend API: https://webprojekti-production.up.railway.app/api
 ## Ryhmän jäsenet
 
 - Kirill Aaltonen
-- Aamos Kahainen
+- Aamos Kaheinen
 
 ## Sovelluksen idea ja kohderyhmä
 
