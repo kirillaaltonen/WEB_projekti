@@ -210,17 +210,6 @@ HSL:
 ```txt
 POST /api/route
 ```
-## Käyttäjätestaus ja palaute
-
-Sovellusta testataan käyttäjäpalautteen avulla. Testaajat käyvät läpi sovelluksen keskeiset toiminnot, kuten ruokalistan selaamisen, kirjautumisen, tilaamisen, omien tilausten tarkistamisen sekä ylläpidon perustoiminnot.
-
-Palaute kerätään Google Forms -lomakkeella. Lomakkeessa arvioidaan muun muassa README:n selkeyttä, sovelluksen käyttötarkoituksen ymmärrettävyyttä ja sitä, löytyvätkö käyttöliittymästä helposti tarvittavat toiminnot.
-
-Palautelomake:  
-https://forms.gle/c1RVaDYN9S2LqJvG9
-
-Palautteen tulokset:  
-https://docs.google.com/spreadsheets/d/1LRJ138Qkev5yk1zcWE9F4rpUkCFOphbexLGQfojTbzc/edit?usp=sharing
 
 ## Tietokanta
 
@@ -286,15 +275,15 @@ Ehdotetut E2E-testit:
 
 ## Käyttäjätestaus ja palaute
 
-Testikäyttäjille voidaan antaa tehtäviksi esimerkiksi ruokalistan löytäminen, tilauksen tekeminen ja admin-paneelin toimintojen kokeileminen.
+Sovellusta testataan käyttäjäpalautteen avulla. Testaajat käyvät läpi sovelluksen keskeiset toiminnot, kuten ruokalistan selaamisen, kirjautumisen, tilaamisen, omien tilausten tarkistamisen sekä ylläpidon perustoiminnot.
 
-Palautelomakkeen kysymykset:
+Palaute kerätään Google Forms -lomakkeella. Lomakkeessa arvioidaan muun muassa README:n selkeyttä, sovelluksen käyttötarkoituksen ymmärrettävyyttä ja sitä, löytyvätkö käyttöliittymästä helposti tarvittavat toiminnot.
 
-1. Oliko README selkeä ja vaatimusten mukainen? Arvio 1–5.
-2. Saiko selkeän kuvan, mikä sovelluksen tarkoitus on ja kenelle se on tarkoitettu? Arvio 1–5.
-3. Löytyivätkö tarvittavat toiminnot helposti? Arvio 1–5.
-4. Oliko tilaaminen riittävän helppoa ilman ohjeistusta? Arvio 1–5.
-5. Vapaa palaute.
+Palautelomake:  
+https://forms.gle/c1RVaDYN9S2LqJvG9
+
+Palautteen tulokset:  
+https://docs.google.com/spreadsheets/d/1LRJ138Qkev5yk1zcWE9F4rpUkCFOphbexLGQfojTbzc/edit?usp=sharing
 
 ## Lighthouse ja validointi
 
@@ -313,8 +302,6 @@ Testattavat sivut:
 - Tilaukseni
 - Hallinta
 - Sijainti
-
-HTML ja CSS voidaan validoida W3C-validaattoreilla.
 
 ## Julkaisu
 
@@ -336,4 +323,3 @@ Frontend kommunikoi backendin kanssa REST API -rajapintojen kautta.
 - Tiedotteiden hallinta
 - Useampi toimipiste
 - Kielenvaihto suomi/englanti
-- 
