@@ -1,6 +1,6 @@
 # Metro Pizza
 
-Metro Pizza on ravintola-aiheinen web-sovellus ja tilaus-/noutojärjestelmä. Asiakas voi selata ruokalistaa, rekisteröityä, kirjautua sisään, lisätä tuotteita ostoskoriin ja tehdä tilauksen. Ylläpitäjä voi hallita tilauksia, ruokalistaa ja käyttäjiä hallintapaneelista.
+Metro Pizza on ravintola-aiheinen web-sovellus ja tilausjärjestelmä. Asiakas voi selata ruokalistaa, rekisteröityä, kirjautua sisään, lisätä tuotteita ostoskoriin ja tehdä tilauksen. Ylläpitäjä voi hallita tilauksia, ruokalistaa ja käyttäjiä hallintapaneelista.
 
 ## Julkaistu sovellus
 
@@ -10,13 +10,14 @@ Backend API: https://webprojekti-production.up.railway.app/api
 
 ## Ryhmän jäsenet
 
-- Nimi 1
-- Nimi 2
-- Nimi 3
+- Kirill
+- Aamos
 
 ## Sovelluksen idea ja kohderyhmä
 
-Sovellus on suunnattu kampus-/lounasravintolan asiakkaille ja ylläpidolle. Asiakkaalle tärkeää on nopea tilaaminen, selkeä ruokalista, hinnat ja erityisruokavaliot. Ylläpitäjälle tärkeää on tilausten seuraaminen sekä ruokalistan helppo muokkaaminen ilman tietokannan käsittelyä.
+Metro Pizza on suunnattu ensisijaisesti Metropolian Arabian kampuksella opiskeleville opiskelijoille. Ideana on, että opiskelija voi selata ruokalistaa ja tehdä tilauksen nopeasti esimerkiksi oppitunnin lopussa, jolloin ruoka voidaan hakea mukaan heti tunnin jälkeen. Sovelluksessa huomioidaan myös opiskelija-alennukset, hinnat ja erityisruokavaliot, jotta tilaaminen olisi mahdollisimman selkeää ja nopeaa.
+
+Arabian kampus valittiin kohteeksi, koska se sijaitsee hyvien julkisten yhteyksien päässä lähellä Helsingin keskustaa. Tämän vuoksi ravintola on helposti saavutettavissa opiskelijoiden lisäksi myös muille asiakkaille. Ylläpitäjälle sovellus tarjoaa helpon tavan seurata tilauksia ja muokata ruokalistaa ilman suoraa tietokannan käsittelyä.
 
 ## Päätoiminnallisuudet
 
@@ -237,7 +238,7 @@ Tietokannan rakenne löytyy tiedostosta `tietokanta.sql`.
 ### Admin-polku
 
 1. Kirjaudu admin-käyttäjänä.
-2. Avaa hallintasivu.
+2. Avaa hallintasivu painamalla ylläpito nappia etusivun alaosassa.
 3. Tarkista koontinäytön tiedot.
 4. Muuta tilauksen tila.
 5. Lisää uusi tuote.
@@ -316,7 +317,6 @@ Frontend kommunikoi backendin kanssa REST API -rajapintojen kautta.
 
 - HSL-reittihaku ei välttämättä löydä reittiä yöaikaan tai HSL-alueen ulkopuolelta.
 - Admin-käyttäjä pitää luoda rekisteröimällä käyttäjä ja vaihtamalla rooli adminiksi tai lisäämällä admin tietokantaan valmiilla salasanahashilla.
-- Automaattiset testit tulee vielä viimeistellä, jos ne palautetaan osana projektia.
 
 ## Jatkokehitysideoita
 
@@ -325,4 +325,4 @@ Frontend kommunikoi backendin kanssa REST API -rajapintojen kautta.
 - Tiedotteiden hallinta
 - Useampi toimipiste
 - Kielenvaihto suomi/englanti
-- Paremmat automaattiset testit
+- 

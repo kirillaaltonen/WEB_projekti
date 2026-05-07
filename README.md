@@ -1,78 +1,54 @@
 # Metro Pizza
 
-Metro Pizza on ravintola-aiheinen web-sovellus, jossa asiakas voi selata lounaslistaa, rekisteröityä, kirjautua sisään, lisätä tuotteita ostoskoriin ja tehdä tilauksen. Ylläpitäjä voi hallita ruokalistaa, tilauksia ja käyttäjiä erillisessä hallintapaneelissa.
+Metro Pizza on ravintola-aiheinen web-sovellus ja tilausjärjestelmä. Asiakas voi selata ruokalistaa, rekisteröityä, kirjautua sisään, lisätä tuotteita ostoskoriin ja tehdä tilauksen. Ylläpitäjä voi hallita tilauksia, ruokalistaa ja käyttäjiä hallintapaneelista.
 
 ## Julkaistu sovellus
 
-Frontend:
+Frontend: https://metropizza.netlify.app/
 
-https://metropizza.netlify.app/
-
-Backend API:
-
-https://webprojekti-production.up.railway.app/api
+Backend API: https://webprojekti-production.up.railway.app/api
 
 ## Ryhmän jäsenet
 
-- Nimi 1
-- Nimi 2
-- Nimi 3
+- Kirill Aaltonen
+- Aamos Kaheinen
 
 ## Sovelluksen idea ja kohderyhmä
 
-Metro Pizza on kampusympäristöön suunniteltu pizzaravintolan tilaus- ja noutojärjestelmä. Sovelluksen kohderyhmänä ovat opiskelijat, henkilökunta ja ravintolan ylläpitäjät.
+Metro Pizza on suunnattu ensisijaisesti Metropolian Arabian kampuksella opiskeleville opiskelijoille. Ideana on, että opiskelija voi selata ruokalistaa ja tehdä tilauksen nopeasti esimerkiksi oppitunnin lopussa, jolloin ruoka voidaan hakea mukaan heti tunnin jälkeen. Sovelluksessa huomioidaan myös opiskelija-alennukset, hinnat ja erityisruokavaliot, jotta tilaaminen olisi mahdollisimman selkeää ja nopeaa.
 
-Asiakkaan näkökulmasta tärkeintä on, että ruokalista on selkeä, hinnat näkyvät heti, erityisruokavaliot ovat helposti tunnistettavissa ja tilauksen tekeminen onnistuu nopeasti.
-
-Ylläpitäjän näkökulmasta tärkeintä on, että tilauksia voi seurata, tilausten tilaa voi päivittää ja ruokalistaa voi muokata ilman tietokannan manuaalista käsittelyä.
+Arabian kampus valittiin kohteeksi, koska se sijaitsee hyvien julkisten yhteyksien päässä lähellä Helsingin keskustaa. Tämän vuoksi ravintola on helposti saavutettavissa opiskelijoiden lisäksi myös muille asiakkaille. Ylläpitäjälle sovellus tarjoaa helpon tavan seurata tilauksia ja muokata ruokalistaa ilman suoraa tietokannan käsittelyä.
 
 ## Päätoiminnallisuudet
 
 ### Asiakas
 
-- Etusivun selaaminen
-- Ruokalistan selaaminen
+- Etusivu ja ravintolan perustiedot
+- Ruokalista omasta API-rajapinnasta
 - Päivän lounaslistan korostus
-- Erityisruokavalioiden suodatus
-  - kaikki
-  - kasvis
-  - gluteeniton
-  - laktoositon
-- Rekisteröityminen
-- Kirjautuminen
-- Kirjautuneen käyttäjän navigaatio
-  - Kirjaudu-linkki muuttuu Tilaukseni-linkiksi
-  - Kirjaudu ulos -toiminto
-- Tuotteiden lisääminen ostoskoriin
+- Hintojen ja erityisruokavalioiden näyttäminen
+- Suodatus: kaikki, kasvis, gluteeniton ja laktoositon
+- Rekisteröityminen ja kirjautuminen
+- Ostoskori
 - Tilauksen tekeminen
 - Omien tilausten katsominen
+- Kirjautuneelle käyttäjälle Tilaukseni- ja Kirjaudu ulos -linkit
 
 ### Ylläpitäjä
 
 - Admin-kirjautuminen
-- Koontinäyttö
-  - tilaukset tänään
-  - odottavat tilaukset
-  - päivän myynti
-  - rekisteröityneet käyttäjät
-- Tilausten hallinta
-  - tilausten listaus
-  - tilauksen tilan muuttaminen
-- Ruokalistan hallinta
-  - tuotteen lisääminen
-  - tuotteen muokkaaminen
-  - tuotteen poistaminen
-- Käyttäjien hallinta
-  - käyttäjien listaus
-  - roolin muuttaminen opiskelijasta adminiksi tai administa opiskelijaksi
+- Koontinäyttö tilastoilla
+- Tilausten listaus ja tilan muuttaminen
+- Ruokalistan tuotteen lisääminen, muokkaaminen ja poistaminen
+- Käyttäjien listaus ja roolin vaihtaminen
 
 ### Avoin API
 
-Sijaintisivulla käytetään HSL:n reititys-API:a backendin kautta. Käyttäjä voi hakea reitin nykyisestä sijainnistaan Metro Pizzaan. Jos reittiä ei löydy esimerkiksi yöaikaan tai HSL-alueen ulkopuolella, sovellus näyttää käyttäjälle ilmoituksen.
+Sijaintisivulla käytetään HSL:n reititys-API:a backendin kautta. Käyttäjä voi hakea reitin nykyisestä sijainnistaan ravintolaan. Jos käyttäjä ei ole HSL-alueella tai reittejä ei ole saatavilla esimerkiksi yöaikaan, sovellus näyttää ilmoituksen.
 
 ## Teknologiat
 
-### Frontend
+Frontend:
 
 - HTML
 - CSS
@@ -80,7 +56,7 @@ Sijaintisivulla käytetään HSL:n reititys-API:a backendin kautta. Käyttäjä 
 - Webpack
 - Netlify
 
-### Backend
+Backend:
 
 - Node.js
 - Express
@@ -89,272 +65,245 @@ Sijaintisivulla käytetään HSL:n reititys-API:a backendin kautta. Käyttäjä 
 - bcrypt
 - Railway
 
-### Tietokanta
-
-- MySQL
-- Railway MySQL
-
 ## Projektin rakenne
 
 ```txt
 WEB_projekti/
 ├── backend/
 │   ├── routes/
-│   │   ├── admin.js
-│   │   ├── auth.js
-│   │   ├── menu.js
-│   │   └── orders.js
 │   ├── db.js
 │   └── server.js
-│
 ├── Html/
 │   ├── css/
-│   │   └── style.css
 │   ├── js/
-│   │   ├── hsl/
-│   │   │   ├── Routeservice.js
-│   │   │   └── uiRenderer.js
-│   │   ├── admin.js
-│   │   ├── auth.js
-│   │   ├── cart.js
-│   │   ├── hsl.js
-│   │   ├── menu.js
-│   │   ├── my-orders.js
-│   │   └── nav-auth.js
 │   ├── index.html
 │   ├── ruokalista.html
 │   ├── kirjaudu.html
 │   ├── sijainti.html
 │   ├── hallinta.html
 │   └── tilaukseni.html
-│
 ├── img/
 ├── tietokanta.sql
 ├── package.json
-├── webpack.common.cjs
-├── webpack.config.dev.cjs
-└── webpack.config.prod.cjs
-Asennus ja käynnistys lokaalisti
-1. Kloonaa projekti
+└── webpack-configit
+```
+
+## Asennus ja käynnistys lokaalisti
+
+### 1. Kloonaa projekti
+
+```bash
 git clone <repository-url>
 cd WEB_projekti
-2. Asenna riippuvuudet
+```
+
+### 2. Asenna riippuvuudet
+
+```bash
 npm install
-3. Luo .env-tiedosto projektin juureen
+```
+
+### 3. Luo `.env`-tiedosto projektin juureen
+
+```env
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=oma_salasana
 DB_NAME=metro_pizza
-
 JWT_SECRET=oma_salainen_avain
 HSL_API_KEY=oma_hsl_api_avain
-4. Luo tietokanta
+```
 
-Aja MySQL Workbenchissä projektin tietokanta.sql.
+### 4. Luo tietokanta
 
-5. Käynnistä backend ja frontend kehitystilassa
+Aja MySQL Workbenchissä projektin `tietokanta.sql`.
+
+### 5. Käynnistä projekti
+
+Backend ja frontend yhdessä:
+
+```bash
 npm run dev
+```
 
-Vaihtoehtoisesti erikseen:
+Tai erikseen:
 
+```bash
 npm run server
 npm run frontend
+```
 
-Backend käynnistyy lokaalisti osoitteeseen:
+Backend toimii lokaalisti osoitteessa:
 
+```txt
 http://localhost:3001
+```
 
-Frontend käynnistyy kehitystilassa osoitteeseen:
+Frontend toimii kehitystilassa osoitteessa:
 
+```txt
 http://localhost:8080
-Production build
+```
 
-Frontendin tuotantoversio rakennetaan komennolla:
+## Production build
 
+```bash
 npm run build
+```
 
-Build muodostaa dist/-kansion.
+Build muodostaa `dist/`-kansion. Buildin voi testata lokaalisti:
 
-Buildin voi testata lokaalisti komennolla:
-
+```bash
 npx serve dist
-Testikäyttäjät
-Admin
+```
+
+## Testikäyttäjät
+
+Admin:
+
+```txt
 Sähköposti: admin@metropizza.fi
-Salasana: [lisää tähän sovittu salasana]
-Asiakas
+Salasana: lisää tähän sovittu salasana
+```
 
-Käyttäjän voi luoda rekisteröitymissivun kautta.
+Asiakkaan voi luoda rekisteröitymissivun kautta.
 
-API-endpointit
-Auth
+## API-endpointit
+
+Auth:
+
+```txt
 POST /api/auth/register
 POST /api/auth/login
-Ruokalista
+```
+
+Ruokalista:
+
+```txt
 GET /api/menu
 GET /api/menu/lounas
-Tilaukset
+```
+
+Tilaukset:
+
+```txt
 POST /api/orders
 GET /api/orders/my-orders
-Admin
+```
+
+Admin:
+
+```txt
 GET /api/admin/orders
 PUT /api/admin/orders/:id
 GET /api/admin/stats
-
 POST /api/admin/menu
 PUT /api/admin/menu/:id
 DELETE /api/admin/menu/:id
-
 GET /api/admin/users
 PUT /api/admin/users/:id/role
-HSL-reitti
+```
+
+HSL:
+
+```txt
 POST /api/route
-Tietokannan taulut
+```
 
-Sovellus käyttää seuraavia päätauluja:
+## Tietokanta
 
-KAYTTAJAT
-TUOTTEET
-TILAUKSET
-TILAUSRIVIT
-KAYTTAJAT
+Sovellus käyttää MySQL-tietokantaa. Päätaulut ovat:
 
-Tallentaa käyttäjät, salasanahashit ja roolit.
+- `KAYTTAJAT`
+- `TUOTTEET`
+- `TILAUKSET`
+- `TILAUSRIVIT`
 
-TUOTTEET
+Tietokannan rakenne löytyy tiedostosta `tietokanta.sql`.
 
-Tallentaa ruokalistan tuotteet, hinnat, kategoriat, viikonpäivät ja erityisruokavaliot.
+## Miten sovellus testataan
 
-TILAUKSET
+### Asiakaspolku
 
-Tallentaa asiakkaan tekemät tilaukset ja tilauksen tilan.
+1. Avaa etusivu.
+2. Siirry ruokalistaan.
+3. Tarkista, että tuotteet latautuvat API:sta.
+4. Rekisteröidy ja kirjaudu sisään.
+5. Lisää tuote ostoskoriin.
+6. Tee tilaus.
+7. Tarkista tilaus Tilaukseni-sivulta.
+8. Kirjaudu ulos.
 
-TILAUSRIVIT
+### Admin-polku
 
-Tallentaa tilauksen tuotteet ja määrät.
+1. Kirjaudu admin-käyttäjänä.
+2. Avaa hallintasivu painamalla ylläpito nappia etusivun alaosassa.
+3. Tarkista koontinäytön tiedot.
+4. Muuta tilauksen tila.
+5. Lisää uusi tuote.
+6. Muokkaa tuotetta.
+7. Poista tuote.
+8. Tarkista käyttäjälista ja roolin vaihtaminen.
 
-Miten sovellusta testataan
-1. Etusivu
-Avaa sovellus.
-Tarkista, että etusivu latautuu.
-Tarkista, että navigaation linkit toimivat.
-Siirry ruokalistaan.
-2. Ruokalista
-Avaa ruokalista.html.
-Tarkista, että tuotteet latautuvat API:sta.
-Tarkista, että hinnat näkyvät.
-Tarkista, että erityisruokavaliot näkyvät.
-Testaa suodattimet:
-Kaikki
-Kasvis
-Gluteeniton
-Laktoositon
-Tarkista, että päivän lista on korostettu.
-3. Rekisteröityminen ja kirjautuminen
-Avaa kirjautumissivu.
-Rekisteröi uusi käyttäjä.
-Kirjaudu sisään.
-Tarkista, että navigaatiossa näkyy Tilaukseni.
-Kirjaudu ulos.
-Tarkista, että navigaatiossa näkyy Kirjaudu.
-4. Ostoskori ja tilaus
-Kirjaudu sisään asiakkaana.
-Avaa ruokalista.
-Lisää tuote ostoskoriin.
-Avaa ostoskori.
-Tee tilaus.
-Tarkista, että sovellus näyttää tilausnumeron.
-Avaa Tilaukseni-sivu.
-Tarkista, että tehty tilaus näkyy listassa.
-5. Admin-paneeli
-Kirjaudu admin-käyttäjänä.
-Avaa hallinta.html.
-Tarkista, että koontinäyttö latautuu.
-Tarkista, että tilaukset näkyvät.
-Muuta tilauksen tila.
-Lisää uusi tuote ruokalistaan.
-Muokkaa tuotetta.
-Poista tuote.
-Tarkista, että käyttäjälista näkyy.
-Vaihda käyttäjän rooli.
-6. HSL-reittihaku
-Avaa sijainti.html.
-Salli selaimen sijaintilupa.
-Paina “Näytä reitti sijainnistani”.
-Tarkista, että sovellus näyttää reitin tai selkeän viestin, jos reittiä ei löydy.
+### HSL-reittihaku
 
-Huomio: HSL-reittejä ei välttämättä löydy yöaikaan tai HSL-alueen ulkopuolelta.
+1. Avaa sijaintisivu.
+2. Salli selaimen sijaintilupa.
+3. Paina “Näytä reitti sijainnistani”.
+4. Tarkista, että sovellus näyttää reitin tai selkeän ilmoituksen, jos reittiä ei löydy.
 
-Integraatiotestien ehdotettu kattavuus
+## Testiautomaatio
 
-Projektissa voidaan testata vähintään seuraavat integraatiot:
+Projektin vaatimuksiin kuuluu vähintään 5 integraatiotestiä ja 5 end-to-end-testiä.
 
-Käyttäjän rekisteröinti
-Käyttäjän kirjautuminen
-Ruokalistan haku API:sta
-Tilauksen tekeminen
-Adminin tilausten haku
-Tuotteen lisääminen adminina
-Tuotteen poistaminen adminina
-End-to-end-testien ehdotettu kattavuus
+Ehdotetut integraatiotestit:
 
-Projektissa voidaan testata vähintään seuraavat E2E-polut:
+1. Käyttäjän rekisteröinti
+2. Käyttäjän kirjautuminen
+3. Ruokalistan haku API:sta
+4. Tilauksen tekeminen
+5. Adminin tilausten haku
 
-Käyttäjä avaa etusivun ja siirtyy ruokalistaan
-Käyttäjä rekisteröityy ja kirjautuu sisään
-Käyttäjä lisää tuotteen ostoskoriin
-Käyttäjä tekee tilauksen
-Käyttäjä näkee oman tilauksensa Tilaukseni-sivulla
-Admin kirjautuu sisään ja muuttaa tilauksen tilaa
-Admin lisää, muokkaa ja poistaa ruokalistan tuotteen
-Käyttäjätestaus ja palaute
+Ehdotetut E2E-testit:
 
-Käyttäjätestauksessa testikäyttäjille voidaan antaa seuraavat tehtävät:
+1. Käyttäjä avaa etusivun ja siirtyy ruokalistaan
+2. Käyttäjä rekisteröityy ja kirjautuu
+3. Käyttäjä lisää tuotteen ostoskoriin
+4. Käyttäjä tekee tilauksen
+5. Admin kirjautuu ja muuttaa tilauksen tilaa
 
-Etsi ruokalista.
-Suodata ruokalistaa erityisruokavalion perusteella.
-Rekisteröidy ja kirjaudu sisään.
-Lisää tuote ostoskoriin.
-Tee tilaus.
-Tarkista oma tilaus.
-Adminina muuta tilauksen tila.
-Adminina lisää tai muokkaa ruokalistan tuotetta.
+## Käyttäjätestaus ja palaute
 
-Palautelomakkeen kysymykset:
+Sovellusta testataan käyttäjäpalautteen avulla. Testaajat käyvät läpi sovelluksen keskeiset toiminnot, kuten ruokalistan selaamisen, kirjautumisen, tilaamisen, omien tilausten tarkistamisen sekä ylläpidon perustoiminnot.
 
-Oliko README selkeä ja vaatimusten mukainen?
-Arvio 1–5.
-Saiko selkeän kuvan, mikä on sovelluksen käyttötarkoitus ja kenelle se on tarkoitettu?
-Arvio 1–5.
-Löytyivätkö käyttöliittymästä helposti kaikki tarvittavat toiminnot?
-Arvio 1–5.
-Vapaa palaute.
-Oma kysymys: Oliko tilaaminen riittävän helppoa ilman erillistä ohjeistusta?
-Arvio 1–5.
-Lighthouse ja validointi
+Palaute kerätään Google Forms -lomakkeella. Lomakkeessa arvioidaan muun muassa README:n selkeyttä, sovelluksen käyttötarkoituksen ymmärrettävyyttä ja sitä, löytyvätkö käyttöliittymästä helposti tarvittavat toiminnot.
 
-Sovelluksen tekninen testaus tehdään Chrome DevTools Lighthouse -työkalulla production-buildistä tai julkaistusta Netlify-versiosta.
+Palautelomake:  
+https://forms.gle/c1RVaDYN9S2LqJvG9
+
+Palautteen tulokset:  
+https://docs.google.com/spreadsheets/d/1LRJ138Qkev5yk1zcWE9F4rpUkCFOphbexLGQfojTbzc/edit?usp=sharing
+
+## Lighthouse ja validointi
+
+Lighthouse-testit ajetaan Chrome DevToolsilla julkaistusta Netlify-versiosta tai production-buildistä. Testattavat kategoriat:
+
+- Performance
+- Accessibility
+- Best Practices
+- SEO
 
 Testattavat sivut:
 
-Etusivu
-Ruokalista
-Kirjautuminen
-Tilaukseni
-Hallinta
-Sijainti
+- Etusivu
+- Ruokalista
+- Kirjautuminen
+- Tilaukseni
+- Hallinta
+- Sijainti
 
-Lighthouse-kategoriat:
-
-Performance
-Accessibility
-Best Practices
-SEO
-
-HTML ja CSS voidaan validoida W3C-validaattoreilla.
-
-Julkaisu
+## Julkaisu
 
 Frontend on julkaistu Netlifyssä.
 
@@ -362,22 +311,15 @@ Backend ja MySQL-tietokanta on julkaistu Railway-palvelussa.
 
 Frontend kommunikoi backendin kanssa REST API -rajapintojen kautta.
 
-Tunnetut rajoitukset
-HSL-reittihaku voi palauttaa “Reittejä ei löytynyt”, jos käyttäjä ei ole HSL-alueella tai reittejä ei ole saatavilla kyseisenä ajankohtana.
-Admin-käyttäjä pitää luoda joko rekisteröimällä käyttäjä ja vaihtamalla rooli adminiksi tai lisäämällä admin tietokantaan valmiilla salasanahashilla.
-Testiautomaatio on dokumentoitu, mutta automaattiset testit pitää vielä ajaa tai täydentää, jos kurssipalautus sitä edellyttää.
-Miksi projekti on hyödyllinen?
+## Tunnetut rajoitukset
 
-Sovellus ratkaisee kampusravintolan tilaus- ja noutoprosessin perusongelman: asiakas näkee ruokalistan, hinnat ja erityisruokavaliot selkeästi, voi tehdä tilauksen verkossa ja seurata omia tilauksiaan. Ravintolan ylläpitäjä pystyy hallitsemaan tilauksia ja ruokalistaa ilman suoraa tietokantatyöskentelyä.
+- HSL-reittihaku ei välttämättä löydä reittiä yöaikaan tai HSL-alueen ulkopuolelta.
+- Admin-käyttäjä pitää luoda rekisteröimällä käyttäjä ja vaihtamalla rooli adminiksi tai lisäämällä admin tietokantaan valmiilla salasanahashilla.
 
-Ylläpito ja jatkokehitys
+## Jatkokehitysideoita
 
-Mahdollisia jatkokehitysideoita:
-
-Maksutoiminto
-Tarkempi tilauksen noutoaika
-Tiedotteiden hallinta
-Useampi toimipiste
-Kielenvaihto suomi/englanti
-Paremmat automaattiset testit
-Admin-paneelin hakutoiminnot ja suodatus
+- Maksutoiminto
+- Tarkempi noutoaika
+- Tiedotteiden hallinta
+- Useampi toimipiste
+- Kielenvaihto suomi/englanti
