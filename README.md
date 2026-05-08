@@ -164,7 +164,7 @@ Admin:
 
 ```txt
 Sähköposti: admin@metropizza.fi
-Salasana: lisää tähän sovittu salasana
+Salasana: z9Y!mk@!5Tpqe"K
 ```
 
 Asiakkaan voi luoda rekisteröitymissivun kautta.
