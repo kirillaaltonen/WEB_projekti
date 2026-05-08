@@ -257,7 +257,7 @@ Tietokannan rakenne löytyy tiedostosta `tietokanta.sql`.
 
 Projektin vaatimuksiin kuuluu vähintään 5 integraatiotestiä ja 5 end-to-end-testiä.
 
-Ehdotetut integraatiotestit:
+integraatiotestit:
 
 1. Käyttäjän rekisteröinti
 2. Käyttäjän kirjautuminen
